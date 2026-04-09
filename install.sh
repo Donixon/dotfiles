@@ -95,7 +95,6 @@ yay -S --needed --noconfirm \
     grimblast-git \
     notepad \
     pacseek \
-    teamspeak \
     timeshift-autosnap \
     ttf-symbola \
     vscodium-bin \
