@@ -222,8 +222,9 @@ zram-size = ram / 2
 compression-algorithm = zstd
 EOF
 
-# Numlock aan bij opstarten
-sudo sed -i 's/^#numlock.*/numlock = yes/' /etc/ly/config.ini 2>/dev/null || true
+# Ly display manager config
+sudo cp "$HOME/.config/ly/config.ini" /etc/ly/config.ini
+sudo sed -i "s/{USER}/$(whoami)/" /etc/ly/config.ini
 
 # Font cache verversen
 fc-cache -fv
