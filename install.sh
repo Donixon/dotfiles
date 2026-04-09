@@ -26,7 +26,15 @@ TIMEZONE="${TIMEZONE:-Europe/Amsterdam}"
 
 echo ""
 
-# ── 1. Yay (AUR helper) ───────────────────────────────────────────────────
+# ── 1. Pacman optimaliseren ───────────────────────────────────────────────
+step "Pacman instellen..."
+sudo sed -i 's/^#ParallelDownloads.*/ParallelDownloads = 5/' /etc/pacman.conf
+sudo sed -i 's/^#Color/Color/' /etc/pacman.conf
+
+# Makepkg alle cores gebruiken
+sudo sed -i "s/^#MAKEFLAGS.*/MAKEFLAGS=\"-j\$(nproc)\"/" /etc/makepkg.conf
+
+# ── 2. Yay (AUR helper) ───────────────────────────────────────────────────
 step "Yay installeren..."
 if ! command -v yay &>/dev/null; then
     sudo pacman -S --needed --noconfirm git base-devel
@@ -40,6 +48,7 @@ fi
 # ── 2. Pacman packages ────────────────────────────────────────────────────
 step "Pacman packages installeren..."
 sudo pacman -S --needed --noconfirm \
+    bluez bluez-utils \
     alsa-plugins \
     base base-devel \
     brightnessctl \
@@ -194,10 +203,29 @@ dconf write /org/nemo/preferences/inherit-folder-viewer true
 dconf write /org/nemo/preferences/swap-trash-delete true
 
 # ── 10. Systeem instellen ────────────────────────────────────────────────
-step "Hostname en tijdzone instellen..."
+step "Hostname, tijdzone en locale instellen..."
 sudo hostnamectl set-hostname "$HOSTNAME_NEW"
 sudo ln -sf "/usr/share/zoneinfo/$TIMEZONE" /etc/localtime
 sudo hwclock --systohc
+
+# Locale
+sudo sed -i 's/^#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
+sudo sed -i 's/^#nl_NL.UTF-8/nl_NL.UTF-8/' /etc/locale.gen
+sudo locale-gen
+echo "LANG=en_US.UTF-8" | sudo tee /etc/locale.conf
+
+# Zram config (voorkomt vastlopen bij vol geheugen)
+sudo tee /etc/systemd/zram-generator.conf > /dev/null << 'EOF'
+[zram0]
+zram-size = ram / 2
+compression-algorithm = zstd
+EOF
+
+# Numlock aan bij opstarten
+sudo sed -i 's/^#numlock.*/numlock = yes/' /etc/ly/config.ini 2>/dev/null || true
+
+# Font cache verversen
+fc-cache -fv
 
 # ── 11. Git instellen ────────────────────────────────────────────────────
 step "Git configureren..."
@@ -208,6 +236,7 @@ git config --global user.email "$GIT_EMAIL"
 step "Services aanzetten..."
 sudo systemctl enable --now \
     NetworkManager \
+    bluetooth \
     docker \
     earlyoom \
     iwd \
