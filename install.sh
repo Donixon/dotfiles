@@ -65,7 +65,7 @@ sudo pacman -S --needed --noconfirm \
     fastfetch \
     firefox \
     git \
-    grub grub-btrfs \
+    grub \
     hypridle hyprland hyprlock hyprpaper \
     hyprpolkitagent \
     hyprshot \
@@ -241,7 +241,6 @@ sudo systemctl enable --now \
     bluetooth \
     docker \
     earlyoom \
-    grub-btrfsd \
     iwd \
     ly \
     tailscaled \
