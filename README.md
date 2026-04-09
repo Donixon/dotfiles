@@ -50,16 +50,6 @@ Halverwege vraagt het script om je SSH key toe te voegen aan GitHub en om je Ope
 - Log in via `ly`
 - Hyprland start op met al je configuratie
 
-## Gevoelige bestanden
-
-`waybar/scripts/secrets.env` staat niet in de repo. Het install script vraagt hierom, maar je kunt het ook handmatig aanmaken:
-
-```bash
-echo 'API_KEY="jouw_key_hier"' > ~/.config/waybar/scripts/secrets.env
-```
-
-Haal je OpenWeatherMap API key op via [openweathermap.org](https://openweathermap.org/api).
-
 ## Wijzigingen pushen
 
 ```bash
