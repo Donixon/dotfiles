@@ -8,10 +8,17 @@ WALLPAPER_DIR="$HOME/.config/hypr/wallpapers"
 if [ -n "$1" ]; then
     WALLPAPER="$1"
 else
-    CURRENT=$(grep "path = " ~/.config/hypr/hyprpaper.conf 2>/dev/null | awk '{print $3}')
-    WALLPAPER=$(find "$WALLPAPER_DIR" -type f \( -name "*.jpg" -o -name "*.png" \) | grep -v "$CURRENT" | shuf -n 1)
-    # Fallback als er maar één wallpaper is
-    [ -z "$WALLPAPER" ] && WALLPAPER=$(find "$WALLPAPER_DIR" -type f \( -name "*.jpg" -o -name "*.png" \) | shuf -n 1)
+    CURRENT=$(grep "path = " ~/.config/hypr/hyprpaper.conf 2>/dev/null | head -1 | awk '{print $3}')
+    mapfile -t ALL < <(find "$WALLPAPER_DIR" -type f \( -name "*.jpg" -o -name "*.png" \) | sort)
+    COUNT=${#ALL[@]}
+    NEXT=0
+    for i in "${!ALL[@]}"; do
+        if [ "${ALL[$i]}" = "$CURRENT" ]; then
+            NEXT=$(( (i + 1) % COUNT ))
+            break
+        fi
+    done
+    WALLPAPER="${ALL[$NEXT]}"
 fi
 
 if [ ! -f "$WALLPAPER" ]; then
