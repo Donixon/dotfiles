@@ -49,6 +49,56 @@ Het script vraagt halverwege om je SSH key toe te voegen aan GitHub.
 - Log in via `ly`
 - Hyprland start op met al je configuratie
 
+## Shortcuts
+
+`$mainMod` = Super (Windows-toets)
+
+### Algemeen
+
+| Shortcut | Actie |
+|----------|-------|
+| `Super + Enter` | Terminal (Kitty) |
+| `Super + Q` | Venster sluiten |
+| `Super + Space` | Launcher (Rofi) |
+| `Super + E` | Bestandsbeheer (Nemo) |
+| `Super + L` | Scherm vergrendelen |
+| `Super + M` | Hyprland afsluiten |
+| `Super + V` | Klembord history |
+| `Ctrl + Shift + Esc` | Power menu |
+
+### Vensters
+
+| Shortcut | Actie |
+|----------|-------|
+| `Super + pijltjes` | Focus verplaatsen |
+| `Super + LMB slepen` | Venster verplaatsen |
+| `Super + RMB slepen` | Venster resizen |
+| `Super + J` | Split omdraaien |
+
+### Workspaces
+
+| Shortcut | Actie |
+|----------|-------|
+| `Super + 1-9` | Naar workspace |
+| `Super + Shift + 1-9` | Venster naar workspace |
+| `Super + Scroll` | Door workspaces scrollen |
+
+### Screenshots
+
+| Shortcut | Actie |
+|----------|-------|
+| `Print` | Scherm (monitor) |
+| `Super + Print` | Venster |
+| `Super + Shift + Print` | Selectie (opgeslagen in ~/screenshots) |
+
+### Media & overig
+
+| Shortcut | Actie |
+|----------|-------|
+| `Super + Shift + N` | Willekeurig wallpaper |
+| `Super + Shift + P/O/T/U` | Chromium PWA's starten |
+| Mediaknoppen | Volume, helderheid, muziek |
+
 ## Wijzigingen pushen
 
 ```bash
