@@ -12,18 +12,20 @@ Persoonlijke Arch Linux configuratie voor een Hyprland desktop.
 | Launcher | Rofi |
 | Lock screen | Hyprlock |
 | Idle manager | Hypridle |
-| Wallpaper | Hyprpaper |
+| Wallpaper | Hyprpaper + pywal |
 | Bestandsbeheer | Nemo |
 | Shell | Pure Zsh |
+| Display manager | Ly |
 
 ## Installatie op een nieuwe laptop
 
 ### 1. Arch installeren
 
 Installeer Arch Linux via de officiële installatiegids. Zorg dat je:
-- Een gebruiker hebt aangemaakt
+- Een gebruiker `don` hebt aangemaakt
 - Internetverbinding hebt
 - Als gewone gebruiker bent ingelogd (niet root)
+- `sudo` geconfigureerd hebt
 
 ### 2. Script uitvoeren
 
@@ -36,20 +38,22 @@ Het script vraagt eerst naar:
 - Hostname voor de nieuwe machine
 - Tijdzone
 
-Daarna doet het automatisch:
+Daarna doet het automatisch (en slaat stappen over die al gedaan zijn):
 - Pacman optimaliseren (parallel downloads, kleur)
 - `yay` installeren (AUR helper)
 - Alle packages installeren (inclusief fonts, bluetooth, docker)
-- Zsh instellen als standaard shell (geen framework)
+- Zsh instellen als standaard shell
 - SSH key aanmaken en GitHub koppelen
 - Dotfiles clonen naar `~/.config`
 - Symlinks aanmaken (`.zshrc`)
 - Nemo acties installeren
+- Pywal kleuren genereren
 - GTK dark mode instellen
 - Nemo instellingen toepassen
-- Ly display manager configureren (autologin, doom animatie)
+- Firefox als standaard browser instellen
 - Hostname, tijdzone en locale instellen
 - Zram instellen (voorkomt vastlopen bij vol geheugen)
+- Ly display manager configureren (autologin)
 - Alle services aanzetten
 - Font cache verversen
 
@@ -60,6 +64,18 @@ Het script pauzeert om je SSH key toe te voegen aan GitHub.
 - Herstart je systeem
 - Log in via `ly`
 - Hyprland start op met al je configuratie
+
+### 4. Monitornamen aanpassen
+
+Op een nieuwe machine kloppen de monitornamen vrijwel zeker niet. Check ze met:
+
+```bash
+hyprctl monitors
+```
+
+Pas daarna aan in:
+- `hypr/hyprland.conf` — `monitor=` regels bovenaan
+- `hypr/hyprpaper.conf` — `monitor =` in het wallpaper blok
 
 ## Shortcuts
 
@@ -92,7 +108,7 @@ Het script pauzeert om je SSH key toe te voegen aan GitHub.
 | Shortcut | Actie |
 |----------|-------|
 | `Super + 1-9` | Naar workspace |
-| `Super + Shift + 1-9` | Venster naar workspace |
+| `Super + Shift + 1-9` | Venster naar workspace (stil) |
 | `Super + Scroll` | Door workspaces scrollen |
 
 ### Screenshots
@@ -103,13 +119,28 @@ Het script pauzeert om je SSH key toe te voegen aan GitHub.
 | `Super + Print` | Venster |
 | `Super + Shift + Print` | Selectie (opgeslagen in ~/screenshots) |
 
-### Media & overig
+### Wallpaper & media
 
 | Shortcut | Actie |
 |----------|-------|
-| `Super + Shift + N` | Volgend wallpaper |
+| `Super + Shift + N` | Volgend wallpaper (sequentieel, pywal herlaadt mee) |
 | `Super + Shift + P/O/T/U` | Chromium PWA's starten |
 | Mediaknoppen | Volume, helderheid, muziek |
+
+## Waybar scripts
+
+Alle scripts staan in `waybar/scripts/`:
+
+| Script | Functie |
+|--------|---------|
+| `check_updates.sh` | Toont aantal beschikbare updates (pacman + AUR) |
+| `update_system.sh` | Voert systeem update uit in terminal |
+| `vpn_status.sh` | Toont VPN staat, toggle OpenVPN verbinding |
+| `power-menu.sh` | Rofi power menu (vergrendelen/uitloggen/suspend/reboot/uitzetten) |
+| `openweathermap.sh` | Haalt weerdata op via OpenWeatherMap API |
+| `cava.sh` | Stuurt cava audio visualizer output naar waybar |
+
+De OpenWeatherMap API key staat in `waybar/scripts/secrets.env` (niet in git).
 
 ## Wijzigingen pushen
 
@@ -119,3 +150,14 @@ git add .
 git commit -m "beschrijving"
 git push
 ```
+
+## Configuratie herladen
+
+| Component | Commando |
+|-----------|----------|
+| Hyprland | `hyprctl reload` |
+| Waybar | `pkill waybar && waybar &` |
+| Hyprpaper | `pkill hyprpaper && hyprpaper &` |
+| Hypridle | `pkill hypridle && hypridle &` |
+| Hyprlock | Wordt actief bij volgende vergrendeling (`Super+L`) |
+| Kitty | Nieuwe vensters pakken wijzigingen automatisch op |
