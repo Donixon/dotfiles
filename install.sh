@@ -81,7 +81,8 @@ sudo pacman -S --needed --noconfirm \
     nano nano-syntax-highlighting \
     nemo nemo-fileroller \
     networkmanager \
-    noto-fonts-cjk noto-fonts-emoji \
+    noto-fonts noto-fonts-cjk noto-fonts-emoji \
+    ttf-liberation \
     ntfs-3g \
     openssh \
     openvpn \
@@ -100,7 +101,7 @@ sudo pacman -S --needed --noconfirm \
     swaync \
     tailscale \
     timeshift \
-    ttf-jetbrains-mono-nerd ttf-nerd-fonts-symbols \
+    ttf-jetbrains-mono-nerd ttf-nerd-fonts-symbols ttf-nerd-fonts-symbols-common \
     udiskie \
     unzip \
     usbutils \
