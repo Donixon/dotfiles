@@ -65,15 +65,18 @@ sudo pacman -S --needed --noconfirm \
     efibootmgr \
     fastfetch \
     firefox \
+    firefoxpwa \
     git \
     grub \
     hypridle hyprland hyprlock hyprpaper \
     hyprpolkitagent \
     hyprshot \
+    impala \
     inotify-tools \
     iw iwd \
     jq \
     kitty \
+    lazydocker \
     linux linux-firmware linux-headers \
     ly \
     man-db \
@@ -103,6 +106,7 @@ sudo pacman -S --needed --noconfirm \
     udiskie \
     unzip \
     usbutils \
+    viewnior \
     vim \
     vlc \
     waybar \
@@ -119,15 +123,11 @@ sudo pacman -S --needed --noconfirm \
 step "AUR packages installeren..."
 yay -S --needed --noconfirm \
     grimblast-git \
-    impala \
-    lazydocker \
     notepad \
     pacseek \
     ttf-symbola \
     vscodium-bin \
-    wlogout \
-    firefoxpwa \
-    viewnior
+    wlogout
 
 # ── 5. Zsh als standaard shell ────────────────────────────────────────────
 step "Zsh instellen als standaard shell..."
@@ -167,6 +167,9 @@ else
     echo "Dotfiles al aanwezig, pullen..."
     git -C "$HOME/.config" pull
 fi
+
+# Pywal kleuren genereren voor eerste Hyprland start (anders zijn border kleuren undefined)
+wal -i "$HOME/.config/hypr/wallpapers/natuur005.jpg" -n -q || true
 
 # ── 8. Symlinks aanmaken ──────────────────────────────────────────────────
 step "Symlinks aanmaken..."
@@ -268,4 +271,9 @@ echo "Volgende stappen:"
 echo "  1. Herstart je systeem"
 echo "  2. Log in via ly"
 echo "  3. VPN config toevoegen in /etc/openvpn/"
+echo ""
+echo "Let op na eerste login:"
+echo "  - Monitornamen aanpassen in hypr/hyprland.conf en hypr/hyprpaper.conf"
+echo "    (gebruik 'hyprctl monitors' om je monitornamen te zien)"
+echo "  - Als audio niet werkt: systemctl --user enable --now wireplumber"
 echo ""
