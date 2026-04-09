@@ -31,17 +31,29 @@ Installeer Arch Linux via de officiële installatiegids. Zorg dat je:
 bash <(curl -s https://raw.githubusercontent.com/Donixon/dotfiles/main/install.sh)
 ```
 
-Het script doet automatisch:
+Het script vraagt eerst naar:
+- Git naam en email
+- Hostname voor de nieuwe machine
+- Tijdzone
+
+Daarna doet het automatisch:
+- Pacman optimaliseren (parallel downloads, kleur)
 - `yay` installeren (AUR helper)
-- Alle packages installeren
+- Alle packages installeren (inclusief fonts, bluetooth, docker)
 - Zsh instellen als standaard shell (geen framework)
 - SSH key aanmaken en GitHub koppelen
 - Dotfiles clonen naar `~/.config`
+- Symlinks aanmaken (`.zshrc`)
+- Nemo acties installeren
 - GTK dark mode instellen
 - Nemo instellingen toepassen
+- Ly display manager configureren (autologin, doom animatie)
+- Hostname, tijdzone en locale instellen
+- Zram instellen (voorkomt vastlopen bij vol geheugen)
 - Alle services aanzetten
+- Font cache verversen
 
-Het script vraagt halverwege om je SSH key toe te voegen aan GitHub.
+Het script pauzeert om je SSH key toe te voegen aan GitHub.
 
 ### 3. Na afloop
 
@@ -95,7 +107,7 @@ Het script vraagt halverwege om je SSH key toe te voegen aan GitHub.
 
 | Shortcut | Actie |
 |----------|-------|
-| `Super + Shift + N` | Willekeurig wallpaper |
+| `Super + Shift + N` | Volgend wallpaper |
 | `Super + Shift + P/O/T/U` | Chromium PWA's starten |
 | Mediaknoppen | Volume, helderheid, muziek |
 
