@@ -100,7 +100,6 @@ sudo pacman -S --needed --noconfirm \
     sudo \
     swaync \
     tailscale \
-    timeshift \
     ttf-jetbrains-mono-nerd ttf-nerd-fonts-symbols ttf-nerd-fonts-symbols-common \
     udiskie \
     unzip \
@@ -121,7 +120,6 @@ yay -S --needed --noconfirm \
     grimblast-git \
     notepad \
     pacseek \
-    timeshift-autosnap \
     ttf-symbola \
     vscodium-bin \
     wlogout \
