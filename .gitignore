@@ -1,6 +1,29 @@
 # Gevoelige bestanden
 waybar/scripts/secrets.env
 
+# App data (niet in repo)
+BambuStudio/
+LobeHub/
+VSCodium/
+chromium/
+discord/
+TeamSpeak/
+audacity/
+blender/
+fontforge/
+freerdp/
+go/
+lazydocker/
+libreoffice/
+menus/
+openspec/
+pacseek/
+remmina/
+autostart/
+systemd/
+viewnior/
+vlc/
+
 # Cache en gegenereerde bestanden
 wal/
 gtk-3.0/bookmarks
