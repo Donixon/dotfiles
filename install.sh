@@ -24,10 +24,7 @@ fi
 step "Pacman packages installeren..."
 sudo pacman -S --needed --noconfirm \
     alsa-plugins \
-    android-file-transfer android-tools \
-    atool \
     base base-devel \
-    bind \
     brightnessctl \
     btop \
     btrfs-progs \
@@ -36,14 +33,11 @@ sudo pacman -S --needed --noconfirm \
     cliphist \
     curl \
     discord \
-    dkms \
     docker docker-compose \
-    dotnet-runtime-9.0 dotnet-sdk-9.0 \
     earlyoom \
     efibootmgr \
     fastfetch \
     firefox \
-    freerdp \
     git \
     grub grub-btrfs \
     gsimplecal \
@@ -56,12 +50,9 @@ sudo pacman -S --needed --noconfirm \
     jq \
     kitty \
     lazydocker \
-    lftp \
-    libreoffice-fresh \
     linux linux-firmware linux-headers \
     ly \
     man-db \
-    mtpfs \
     nano nano-syntax-highlighting \
     nemo nemo-fileroller \
     networkmanager \
@@ -72,14 +63,11 @@ sudo pacman -S --needed --noconfirm \
     pacman-contrib \
     pamixer \
     pavucontrol \
-    php \
     pipewire pipewire-alsa pipewire-jack \
     playerctl \
     pulseaudio \
     pulsemixer \
-    python-pip \
     python-pywal \
-    rdesktop \
     remmina \
     rofi \
     spotify-launcher \
@@ -104,9 +92,6 @@ sudo pacman -S --needed --noconfirm \
 # ── 3. AUR packages ───────────────────────────────────────────────────────
 step "AUR packages installeren..."
 yay -S --needed --noconfirm \
-    bambustudio-bin \
-    displaylink \
-    evdi-dkms \
     grimblast-git \
     notepad \
     pacseek \
@@ -116,8 +101,6 @@ yay -S --needed --noconfirm \
     vscodium-bin \
     wlogout \
     firefoxpwa \
-    audacity \
-    recordmydesktop \
     viewnior
 
 # ── 4. Zsh als standaard shell ────────────────────────────────────────────
