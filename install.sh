@@ -5,9 +5,11 @@
 
 set -e
 COLOR="\033[1;34m"
+GREEN="\033[1;32m"
 RESET="\033[0m"
 
-step() { echo -e "\n${COLOR}==>${RESET} $1"; }
+step()  { echo -e "\n${COLOR}==>${RESET} $1"; }
+skip()  { echo -e "  ${GREEN}✓${RESET} $1 — al gedaan, overgeslagen."; }
 
 # ── Vragen vooraf ─────────────────────────────────────────────────────────
 echo -e "${COLOR}Dotfiles installatie — een paar vragen eerst${RESET}\n"
@@ -28,11 +30,18 @@ echo ""
 
 # ── 1. Pacman optimaliseren ───────────────────────────────────────────────
 step "Pacman instellen..."
-sudo sed -i 's/^#ParallelDownloads.*/ParallelDownloads = 5/' /etc/pacman.conf
-sudo sed -i 's/^#Color/Color/' /etc/pacman.conf
+if grep -q "^#ParallelDownloads" /etc/pacman.conf; then
+    sudo sed -i 's/^#ParallelDownloads.*/ParallelDownloads = 5/' /etc/pacman.conf
+    sudo sed -i 's/^#Color/Color/' /etc/pacman.conf
+else
+    skip "pacman.conf"
+fi
 
-# Makepkg alle cores gebruiken
-sudo sed -i "s/^#MAKEFLAGS.*/MAKEFLAGS=\"-j\$(nproc)\"/" /etc/makepkg.conf
+if grep -q "^#MAKEFLAGS" /etc/makepkg.conf; then
+    sudo sed -i "s/^#MAKEFLAGS.*/MAKEFLAGS=\"-j\$(nproc)\"/" /etc/makepkg.conf
+else
+    skip "makepkg.conf"
+fi
 
 # ── 2. Yay (AUR helper) ───────────────────────────────────────────────────
 step "Yay installeren..."
@@ -42,7 +51,7 @@ if ! command -v yay &>/dev/null; then
     (cd /tmp/yay-bin && makepkg -si --noconfirm)
     rm -rf /tmp/yay-bin
 else
-    echo "Yay al aanwezig."
+    skip "yay"
 fi
 
 # ── 3. Pacman packages ────────────────────────────────────────────────────
@@ -131,7 +140,12 @@ yay -S --needed --noconfirm \
 
 # ── 5. Zsh als standaard shell ────────────────────────────────────────────
 step "Zsh instellen als standaard shell..."
-chsh -s /usr/bin/zsh
+CURRENT_SHELL=$(getent passwd "$USER" | cut -d: -f7)
+if [ "$CURRENT_SHELL" != "/usr/bin/zsh" ]; then
+    chsh -s /usr/bin/zsh
+else
+    skip "standaard shell (al zsh)"
+fi
 
 # ── 6. SSH key aanmaken ───────────────────────────────────────────────────
 step "SSH key aanmaken..."
@@ -142,6 +156,8 @@ if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
     cat "$HOME/.ssh/id_ed25519.pub"
     echo ""
     read -p "Druk Enter als je de key hebt toegevoegd..."
+else
+    skip "SSH key"
 fi
 
 # SSH config voor GitHub (port 443 fallback)
@@ -154,6 +170,8 @@ Host github.com
     Port 443
     User git
 EOF
+else
+    skip "SSH config (github port 443)"
 fi
 chmod 600 "$HOME/.ssh/config"
 
@@ -164,12 +182,16 @@ if [ ! -d "$HOME/.config/.git" ]; then
     git clone git@github.com:Donixon/dotfiles.git "$HOME/.config"
     cp -rn "$HOME/.config.bak/." "$HOME/.config/" 2>/dev/null || true
 else
-    echo "Dotfiles al aanwezig, pullen..."
+    skip "dotfiles clone (al aanwezig, pullen...)"
     git -C "$HOME/.config" pull
 fi
 
-# Pywal kleuren genereren voor eerste Hyprland start (anders zijn border kleuren undefined)
-wal -i "$HOME/.config/hypr/wallpapers/natuur005.jpg" -n -q || true
+# Pywal kleuren genereren voor eerste Hyprland start
+if [ ! -f "$HOME/.cache/wal/colors-hyprland.conf" ]; then
+    wal -i "$HOME/.config/hypr/wallpapers/natuur005.jpg" -n -q || true
+else
+    skip "pywal kleuren"
+fi
 
 # ── 8. Symlinks aanmaken ──────────────────────────────────────────────────
 step "Symlinks aanmaken..."
@@ -187,6 +209,8 @@ if [ ! -f "$SECRETS" ]; then
     step "OpenWeatherMap API key instellen..."
     read -p "Voer je OpenWeatherMap API key in: " OWM_KEY
     echo "API_KEY=\"$OWM_KEY\"" > "$SECRETS"
+else
+    skip "secrets.env"
 fi
 
 # ── 10. GTK dark mode ────────────────────────────────────────────────────
@@ -209,56 +233,83 @@ dconf write /org/nemo/preferences/inherit-folder-viewer true || true
 dconf write /org/nemo/preferences/swap-trash-delete true || true
 
 # Firefox als standaard browser
-xdg-mime default firefox.desktop x-scheme-handler/http
-xdg-mime default firefox.desktop x-scheme-handler/https
-xdg-mime default firefox.desktop text/html
-xdg-mime default firefox.desktop application/xhtml+xml
+if ! xdg-mime query default x-scheme-handler/http 2>/dev/null | grep -q firefox; then
+    xdg-mime default firefox.desktop x-scheme-handler/http
+    xdg-mime default firefox.desktop x-scheme-handler/https
+    xdg-mime default firefox.desktop text/html
+    xdg-mime default firefox.desktop application/xhtml+xml
+else
+    skip "Firefox als standaard browser"
+fi
 
 # ── 11. Systeem instellen ────────────────────────────────────────────────
 step "Hostname, tijdzone en locale instellen..."
-sudo hostnamectl set-hostname "$HOSTNAME_NEW"
+if [ "$(hostname)" != "$HOSTNAME_NEW" ]; then
+    sudo hostnamectl set-hostname "$HOSTNAME_NEW"
+else
+    skip "hostname"
+fi
+
 sudo ln -sf "/usr/share/zoneinfo/$TIMEZONE" /etc/localtime
 sudo hwclock --systohc
 
 # Locale
-sudo sed -i 's/^#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
-sudo sed -i 's/^#nl_NL.UTF-8/nl_NL.UTF-8/' /etc/locale.gen
-sudo locale-gen
-echo "LANG=en_US.UTF-8" | sudo tee /etc/locale.conf
+if ! grep -q "^en_US.UTF-8" /etc/locale.gen 2>/dev/null; then
+    sudo sed -i 's/^#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
+    sudo sed -i 's/^#nl_NL.UTF-8/nl_NL.UTF-8/' /etc/locale.gen
+    sudo locale-gen
+else
+    skip "locale.gen"
+fi
 
-# Zram config (voorkomt vastlopen bij vol geheugen)
-sudo tee /etc/systemd/zram-generator.conf > /dev/null << 'EOF'
+if ! grep -q "^LANG=en_US.UTF-8" /etc/locale.conf 2>/dev/null; then
+    echo "LANG=en_US.UTF-8" | sudo tee /etc/locale.conf
+else
+    skip "locale.conf"
+fi
+
+# Zram config
+if [ ! -f /etc/systemd/zram-generator.conf ]; then
+    sudo tee /etc/systemd/zram-generator.conf > /dev/null << 'EOF'
 [zram0]
 zram-size = ram / 2
 compression-algorithm = zstd
 EOF
+else
+    skip "zram-generator.conf"
+fi
 
 # Ly display manager config
-sudo cp "$HOME/.config/ly/config.ini" /etc/ly/config.ini
-sudo sed -i "s/{USER}/$(whoami)/" /etc/ly/config.ini
+if ! grep -q "autologin_user = $(whoami)" /etc/ly/config.ini 2>/dev/null; then
+    sudo cp "$HOME/.config/ly/config.ini" /etc/ly/config.ini
+    sudo sed -i "s/{USER}/$(whoami)/" /etc/ly/config.ini
+else
+    skip "ly config"
+fi
 
 # Font cache verversen
 fc-cache -fv
 
 # ── 12. Git instellen ────────────────────────────────────────────────────
 step "Git configureren..."
-git config --global user.name "$GIT_NAME"
-git config --global user.email "$GIT_EMAIL"
+CURRENT_GIT_NAME=$(git config --global user.name 2>/dev/null || true)
+CURRENT_GIT_EMAIL=$(git config --global user.email 2>/dev/null || true)
+if [ "$CURRENT_GIT_NAME" != "$GIT_NAME" ] || [ "$CURRENT_GIT_EMAIL" != "$GIT_EMAIL" ]; then
+    git config --global user.name "$GIT_NAME"
+    git config --global user.email "$GIT_EMAIL"
+else
+    skip "git config"
+fi
 
 # ── 13. Services aanzetten ───────────────────────────────────────────────
 step "Services aanzetten..."
-sudo systemctl enable --now \
-    NetworkManager \
-    bluetooth \
-    docker \
-    earlyoom \
-    iwd \
-    ly \
-    tailscaled \
-    avahi-daemon \
-    systemd-resolved \
-    systemd-timesyncd \
-    sshd
+for svc in NetworkManager bluetooth docker earlyoom iwd ly tailscaled avahi-daemon systemd-resolved systemd-timesyncd sshd; do
+    if ! systemctl is-enabled "$svc" &>/dev/null; then
+        sudo systemctl enable --now "$svc"
+    else
+        skip "service $svc"
+    fi
+done
 
 systemctl --user enable --now wireplumber || true
 
