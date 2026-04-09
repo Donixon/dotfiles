@@ -50,6 +50,7 @@ step "Pacman packages installeren..."
 sudo pacman -S --needed --noconfirm \
     bluez bluez-utils \
     alsa-plugins \
+    avahi \
     base base-devel \
     brightnessctl \
     btop \
@@ -107,7 +108,9 @@ sudo pacman -S --needed --noconfirm \
     waybar \
     wget \
     wireplumber \
+    wl-clipboard \
     xdg-desktop-portal-gtk xdg-desktop-portal-hyprland \
+    xdg-utils \
     yt-dlp \
     zram-generator \
     zsh zsh-autosuggestions zsh-completions
@@ -152,6 +155,7 @@ Host github.com
     User git
 EOF
 fi
+chmod 600 "$HOME/.ssh/config"
 
 # ── 7. Dotfiles clonen ────────────────────────────────────────────────────
 step "Dotfiles ophalen..."
@@ -184,22 +188,22 @@ fi
 
 # ── 10. GTK dark mode ────────────────────────────────────────────────────
 step "Dark mode instellen..."
-gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
-gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
+gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' || true
+gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark' || true
 
-dconf write /org/nemo/preferences/default-folder-viewer "'list-view'"
-dconf write /org/nemo/preferences/show-hidden-files false
-dconf write /org/nemo/preferences/show-full-path-in-title-bar true
-dconf write /org/nemo/preferences/show-open-in-terminal-toolbar true
-dconf write /org/nemo/preferences/thumbnail-limit "uint64 10485760"
-dconf write /org/nemo/preferences/default-sort-order "'mtime'"
-dconf write /org/nemo/preferences/default-sort-in-reverse-order true
-dconf write /org/nemo/preferences/show-location-entry true
-dconf write /org/nemo/preferences/date-format "'informal'"
-dconf write /org/nemo/preferences/show-reload-icon-toolbar true
-dconf write /org/nemo/preferences/show-new-folder-icon-toolbar true
-dconf write /org/nemo/preferences/inherit-folder-viewer true
-dconf write /org/nemo/preferences/swap-trash-delete true
+dconf write /org/nemo/preferences/default-folder-viewer "'list-view'" || true
+dconf write /org/nemo/preferences/show-hidden-files false || true
+dconf write /org/nemo/preferences/show-full-path-in-title-bar true || true
+dconf write /org/nemo/preferences/show-open-in-terminal-toolbar true || true
+dconf write /org/nemo/preferences/thumbnail-limit "uint64 10485760" || true
+dconf write /org/nemo/preferences/default-sort-order "'mtime'" || true
+dconf write /org/nemo/preferences/default-sort-in-reverse-order true || true
+dconf write /org/nemo/preferences/show-location-entry true || true
+dconf write /org/nemo/preferences/date-format "'informal'" || true
+dconf write /org/nemo/preferences/show-reload-icon-toolbar true || true
+dconf write /org/nemo/preferences/show-new-folder-icon-toolbar true || true
+dconf write /org/nemo/preferences/inherit-folder-viewer true || true
+dconf write /org/nemo/preferences/swap-trash-delete true || true
 
 # Firefox als standaard browser
 xdg-mime default firefox.desktop x-scheme-handler/http
