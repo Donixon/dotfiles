@@ -9,6 +9,23 @@ RESET="\033[0m"
 
 step() { echo -e "\n${COLOR}==>${RESET} $1"; }
 
+# ── Vragen vooraf ─────────────────────────────────────────────────────────
+echo -e "${COLOR}Dotfiles installatie — een paar vragen eerst${RESET}\n"
+
+read -p "Git naam       [donixon]: " GIT_NAME
+GIT_NAME="${GIT_NAME:-donixon}"
+
+read -p "Git email      [roseshop@tuta.io]: " GIT_EMAIL
+GIT_EMAIL="${GIT_EMAIL:-roseshop@tuta.io}"
+
+read -p "Hostname       [archnixon]: " HOSTNAME_NEW
+HOSTNAME_NEW="${HOSTNAME_NEW:-archnixon}"
+
+read -p "Tijdzone       [Europe/Amsterdam]: " TIMEZONE
+TIMEZONE="${TIMEZONE:-Europe/Amsterdam}"
+
+echo ""
+
 # ── 1. Yay (AUR helper) ───────────────────────────────────────────────────
 step "Yay installeren..."
 if ! command -v yay &>/dev/null; then
@@ -108,7 +125,7 @@ chsh -s /usr/bin/zsh
 # ── 5. SSH key aanmaken ───────────────────────────────────────────────────
 step "SSH key aanmaken..."
 if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
-    ssh-keygen -t ed25519 -C "roseshop@tuta.io" -f "$HOME/.ssh/id_ed25519" -N ""
+    ssh-keygen -t ed25519 -C "$GIT_EMAIL" -f "$HOME/.ssh/id_ed25519" -N ""
     echo ""
     echo "Voeg deze SSH key toe aan GitHub (github.com/settings/ssh/new):"
     cat "$HOME/.ssh/id_ed25519.pub"
@@ -176,12 +193,18 @@ dconf write /org/nemo/preferences/show-new-folder-icon-toolbar true
 dconf write /org/nemo/preferences/inherit-folder-viewer true
 dconf write /org/nemo/preferences/swap-trash-delete true
 
-# ── 10. Git instellen ────────────────────────────────────────────────────
-step "Git configureren..."
-git config --global user.name "donixon"
-git config --global user.email "roseshop@tuta.io"
+# ── 10. Systeem instellen ────────────────────────────────────────────────
+step "Hostname en tijdzone instellen..."
+sudo hostnamectl set-hostname "$HOSTNAME_NEW"
+sudo ln -sf "/usr/share/zoneinfo/$TIMEZONE" /etc/localtime
+sudo hwclock --systohc
 
-# ── 11. Services aanzetten ───────────────────────────────────────────────
+# ── 11. Git instellen ────────────────────────────────────────────────────
+step "Git configureren..."
+git config --global user.name "$GIT_NAME"
+git config --global user.email "$GIT_EMAIL"
+
+# ── 12. Services aanzetten ───────────────────────────────────────────────
 step "Services aanzetten..."
 sudo systemctl enable --now \
     NetworkManager \
