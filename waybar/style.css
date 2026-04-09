@@ -1,0 +1,309 @@
+@import '/home/don/.cache/wal/colors-waybar.css';
+
+/* =============================================================================
+ * Base
+ * =========================================================================== */
+
+* {
+  border: none;
+  border-radius: 0;
+  font-family: 'JetBrains Mono', 'Hack Nerd Font', monospace;
+  font-size: 15px;
+  font-weight: 600;
+  min-height: 0;
+  padding: 0;
+  margin: 0;
+}
+
+window#waybar {
+  background: rgba(15, 15, 20, 0.85);
+  border-bottom: 1px solid @border-color;
+}
+
+/* =============================================================================
+ * Shared module base — all pill-shaped modules inherit this look
+ * =========================================================================== */
+
+#workspaces,
+#clock,
+#custom-cpu,
+#custom-temperature,
+#battery,
+#backlight,
+#pulseaudio,
+#network,
+#tray,
+#custom-launcher,
+#custom-updates,
+#custom-cava,
+#custom-vpn,
+#custom-notification,
+#custom-power {
+  background: @surface0;
+  border-radius: 8px;
+  margin: 5px 2px;
+  padding: 5px 10px;
+  color: @text;
+}
+
+/* =============================================================================
+ * Tooltips
+ * =========================================================================== */
+
+tooltip {
+  background: @background-primary;
+  color: @text;
+  border: 1px solid @border-color;
+  border-radius: 8px;
+  padding: 8px 12px;
+}
+
+tooltip label {
+  color: @text;
+  font-size: 12px;
+}
+
+/* =============================================================================
+ * Workspaces
+ * =========================================================================== */
+
+#workspaces {
+  background: @surface0;
+  padding: 3px 4px;
+  margin: 5px 2px 5px 8px;
+}
+
+#workspaces button {
+  padding: 4px 10px;
+  margin: 0 1px;
+  background: transparent;
+  color: @subtext0;
+  border-radius: 6px;
+  font-weight: bold;
+  transition: all 0.15s ease;
+}
+
+#workspaces button:hover {
+  background: @surface1;
+  color: @text;
+}
+
+#workspaces button.active,
+#workspaces button.focused {
+  background: @mauve;
+  color: @base;
+}
+
+#workspaces button.urgent {
+  background: @maroon;
+  color: @base;
+}
+
+#workspaces button.empty {
+  opacity: 0.35;
+}
+
+/* =============================================================================
+ * Clock
+ * =========================================================================== */
+
+#clock {
+  background: @mauve;
+  color: @base;
+  font-weight: bold;
+  font-size: 15px;
+  padding: 5px 14px;
+  margin: 5px 4px;
+}
+
+/* =============================================================================
+ * Tray
+ * =========================================================================== */
+
+#tray {
+  padding: 5px 10px;
+  margin: 5px 4px 5px 2px;
+}
+
+#tray > .passive {
+  opacity: 0.6;
+}
+
+#tray > .needs-attention {
+  background: @maroon;
+  border-radius: 4px;
+  color: @base;
+}
+
+/* =============================================================================
+ * System modules — left accent border per type
+ * Hex values used for state/semantic colors to bypass pywal palette mismatches
+ * =========================================================================== */
+
+/* CPU — green (low) → yellow → orange → red (critical) */
+#custom-cpu {
+  color: #76946a;
+  border-left: 3px solid #76946a;
+}
+#custom-cpu.low {
+  color: #76946a;
+  border-left-color: #76946a;
+}
+#custom-cpu.medium {
+  color: #dca561;
+  border-left-color: #dca561;
+}
+#custom-cpu.high {
+  color: #ff9e64;
+  border-left-color: #ff9e64;
+}
+#custom-cpu.critical {
+  background: #e46876;
+  color: #1f1f28;
+  border-left-color: #c34043;
+}
+
+/* Temperature — blue (cool) → green → orange → red (hot) */
+#custom-temperature {
+  color: #7fb4ca;
+  border-left: 3px solid #7fb4ca;
+}
+#custom-temperature.cool {
+  color: #7fb4ca;
+  border-left-color: #7fb4ca;
+}
+#custom-temperature.normal {
+  color: #76946a;
+  border-left-color: #76946a;
+}
+#custom-temperature.warm {
+  color: #ff9e64;
+  border-left-color: #ff9e64;
+}
+#custom-temperature.hot {
+  background: #e46876;
+  color: #1f1f28;
+  border-left-color: #c34043;
+}
+
+/* Battery — green (full) → orange (warning) → red bg (critical) */
+#battery {
+  color: #76946a;
+  border-left: 3px solid #76946a;
+}
+#battery.charging,
+#battery.plugged {
+  color: #98bb6c;
+  border-left-color: #98bb6c;
+}
+#battery.full {
+  color: #76946a;
+  border-left-color: #76946a;
+}
+#battery.warning:not(.charging) {
+  color: #ff9e64;
+  border-left-color: #ff9e64;
+}
+#battery.critical:not(.charging) {
+  background: #e46876;
+  color: #1f1f28;
+  border-left-color: #c34043;
+}
+
+/* Backlight — gold, distinct from battery green */
+#backlight {
+  color: #e6c384;
+  border-left: 3px solid #e6c384;
+}
+
+/* Audio — lavender/violet */
+#pulseaudio {
+  color: #a4b9ef;
+  border-left: 3px solid #a4b9ef;
+}
+#pulseaudio.muted {
+  color: @overlay1;
+  border-left-color: @overlay1;
+}
+
+/* Network — sky blue, distinct from audio lavender */
+#network {
+  color: #7dc4e4;
+  border-left: 3px solid #7dc4e4;
+}
+#network.disconnected {
+  color: #e46876;
+  border-left-color: #e46876;
+}
+
+/* =============================================================================
+ * Custom modules
+ * =========================================================================== */
+
+/* Updates — amber */
+#custom-updates {
+  color: #dca561;
+  border-left: 3px solid #dca561;
+}
+
+/* CAVA — teal */
+#custom-cava {
+  color: #6a9589;
+  border-left: 3px solid #6a9589;
+  font-size: 13px;
+  letter-spacing: 1px;
+  margin: 5px 2px 5px 2px;
+}
+
+/* VPN — gray disconnected, green connected */
+#custom-vpn {
+  color: @overlay1;
+  border-left: 3px solid @overlay1;
+}
+#custom-vpn.connected {
+  color: #76946a;
+  border-left-color: #76946a;
+}
+#custom-vpn.disconnected {
+  color: @overlay1;
+  border-left-color: @overlay1;
+}
+
+/* Notifications — pink */
+#custom-notification {
+  color: #d27e99;
+  border-left: 3px solid #d27e99;
+  font-size: 16px;
+}
+
+/* Power — red */
+#custom-power {
+  background: #e46876;
+  color: #1f1f28;
+  font-size: 17px;
+  font-weight: bold;
+  padding: 5px 12px;
+  margin: 5px 8px 5px 2px;
+  border-radius: 8px;
+}
+#custom-power:hover {
+  background: #c34043;
+}
+
+/* =============================================================================
+ * Hover effects
+ * =========================================================================== */
+
+#custom-cpu:hover,
+#custom-temperature:hover,
+#battery:hover,
+#backlight:hover,
+#pulseaudio:hover,
+#network:hover,
+#custom-updates:hover,
+#custom-cava:hover,
+#custom-vpn:hover,
+#custom-notification:hover,
+#clock:hover {
+  background: @surface1;
+}

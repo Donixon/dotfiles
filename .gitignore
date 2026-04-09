@@ -1,0 +1,32 @@
+# Gevoelige bestanden
+waybar/scripts/secrets.env
+
+# Cache en gegenereerde bestanden
+wal/
+gtk-3.0/bookmarks
+gtk-4.0/
+pulse/
+goa-1.0/
+dconf/
+chromium/
+google-chrome/
+BraveSoftware/
+discord/
+teams*/
+obs-studio/
+virt-manager/
+
+# Claude Code
+.claude/
+**/.claude/
+
+# Backups
+*.bak
+*.bkp
+bak_*
+_bak_*
+
+# Grote/onnodige bestanden
+*.log
+*.tmp
+*.cache
