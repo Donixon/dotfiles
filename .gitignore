@@ -1,6 +1,9 @@
 # Gevoelige bestanden
 waybar/scripts/secrets.env
 
+# Claude Code
+CLAUDE.md
+
 # Verwijderde apps
 gsimplecal/
 
