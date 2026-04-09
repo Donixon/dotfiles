@@ -14,7 +14,7 @@ Persoonlijke Arch Linux configuratie voor een Hyprland desktop.
 | Idle manager | Hypridle |
 | Wallpaper | Hyprpaper |
 | Bestandsbeheer | Nemo |
-| Shell | Zsh (geen framework) |
+| Shell | Pure Zsh |
 
 ## Installatie op een nieuwe laptop
 
@@ -31,18 +31,17 @@ Installeer Arch Linux via de officiële installatiegids. Zorg dat je:
 bash <(curl -s https://raw.githubusercontent.com/Donixon/dotfiles/main/install.sh)
 ```
 
-Het script installeert automatisch:
-- `yay` (AUR helper)
-- Alle pacman en AUR packages
-- Zsh config (via symlink)
-- Oh My Zsh wordt **niet** gebruikt
-- SSH key aanmaken + GitHub koppelen
+Het script doet automatisch:
+- `yay` installeren (AUR helper)
+- Alle packages installeren
+- Zsh instellen als standaard shell (geen framework)
+- SSH key aanmaken en GitHub koppelen
 - Dotfiles clonen naar `~/.config`
 - GTK dark mode instellen
-- Nemo instellingen
-- Alle benodigde services aanzetten
+- Nemo instellingen toepassen
+- Alle services aanzetten
 
-Halverwege vraagt het script om je SSH key toe te voegen aan GitHub en om je OpenWeatherMap API key in te vullen.
+Het script vraagt halverwege om je SSH key toe te voegen aan GitHub.
 
 ### 3. Na afloop
 
