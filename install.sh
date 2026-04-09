@@ -241,7 +241,9 @@ sudo systemctl enable --now \
     bluetooth \
     docker \
     earlyoom \
+    grub-btrfsd \
     iwd \
+    ly \
     tailscaled \
     avahi-daemon \
     systemd-resolved \
