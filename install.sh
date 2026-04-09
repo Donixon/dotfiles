@@ -45,7 +45,7 @@ else
     echo "Yay al aanwezig."
 fi
 
-# ── 2. Pacman packages ────────────────────────────────────────────────────
+# ── 3. Pacman packages ────────────────────────────────────────────────────
 step "Pacman packages installeren..."
 sudo pacman -S --needed --noconfirm \
     bluez bluez-utils \
@@ -69,12 +69,10 @@ sudo pacman -S --needed --noconfirm \
     hypridle hyprland hyprlock hyprpaper \
     hyprpolkitagent \
     hyprshot \
-    impala \
     inotify-tools \
     iw iwd \
     jq \
     kitty \
-    lazydocker \
     linux linux-firmware linux-headers \
     ly \
     man-db \
@@ -114,10 +112,12 @@ sudo pacman -S --needed --noconfirm \
     zram-generator \
     zsh zsh-autosuggestions zsh-completions
 
-# ── 3. AUR packages ───────────────────────────────────────────────────────
+# ── 4. AUR packages ───────────────────────────────────────────────────────
 step "AUR packages installeren..."
 yay -S --needed --noconfirm \
     grimblast-git \
+    impala \
+    lazydocker \
     notepad \
     pacseek \
     ttf-symbola \
@@ -126,11 +126,11 @@ yay -S --needed --noconfirm \
     firefoxpwa \
     viewnior
 
-# ── 4. Zsh als standaard shell ────────────────────────────────────────────
+# ── 5. Zsh als standaard shell ────────────────────────────────────────────
 step "Zsh instellen als standaard shell..."
 chsh -s /usr/bin/zsh
 
-# ── 5. SSH key aanmaken ───────────────────────────────────────────────────
+# ── 6. SSH key aanmaken ───────────────────────────────────────────────────
 step "SSH key aanmaken..."
 if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
     ssh-keygen -t ed25519 -C "$GIT_EMAIL" -f "$HOME/.ssh/id_ed25519" -N ""
@@ -153,7 +153,7 @@ Host github.com
 EOF
 fi
 
-# ── 6. Dotfiles clonen ────────────────────────────────────────────────────
+# ── 7. Dotfiles clonen ────────────────────────────────────────────────────
 step "Dotfiles ophalen..."
 if [ ! -d "$HOME/.config/.git" ]; then
     mv "$HOME/.config" "$HOME/.config.bak" 2>/dev/null || true
@@ -164,7 +164,7 @@ else
     git -C "$HOME/.config" pull
 fi
 
-# ── 7. Symlinks aanmaken ──────────────────────────────────────────────────
+# ── 8. Symlinks aanmaken ──────────────────────────────────────────────────
 step "Symlinks aanmaken..."
 ln -sf "$HOME/.config/zsh/.zshrc" "$HOME/.zshrc"
 
@@ -174,7 +174,7 @@ cp "$HOME/.config/nemo/actions/"* "$HOME/.local/share/nemo/actions/"
 cp "$HOME/.config/nemo/scripts/"* "$HOME/.local/share/nemo/scripts/"
 chmod +x "$HOME/.local/share/nemo/scripts/"*
 
-# ── 8. Secrets aanmaken ───────────────────────────────────────────────────
+# ── 9. Secrets aanmaken ───────────────────────────────────────────────────
 SECRETS="$HOME/.config/waybar/scripts/secrets.env"
 if [ ! -f "$SECRETS" ]; then
     step "OpenWeatherMap API key instellen..."
@@ -182,7 +182,7 @@ if [ ! -f "$SECRETS" ]; then
     echo "API_KEY=\"$OWM_KEY\"" > "$SECRETS"
 fi
 
-# ── 9. GTK dark mode ─────────────────────────────────────────────────────
+# ── 10. GTK dark mode ────────────────────────────────────────────────────
 step "Dark mode instellen..."
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark'
 gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark'
@@ -201,7 +201,13 @@ dconf write /org/nemo/preferences/show-new-folder-icon-toolbar true
 dconf write /org/nemo/preferences/inherit-folder-viewer true
 dconf write /org/nemo/preferences/swap-trash-delete true
 
-# ── 10. Systeem instellen ────────────────────────────────────────────────
+# Firefox als standaard browser
+xdg-mime default firefox.desktop x-scheme-handler/http
+xdg-mime default firefox.desktop x-scheme-handler/https
+xdg-mime default firefox.desktop text/html
+xdg-mime default firefox.desktop application/xhtml+xml
+
+# ── 11. Systeem instellen ────────────────────────────────────────────────
 step "Hostname, tijdzone en locale instellen..."
 sudo hostnamectl set-hostname "$HOSTNAME_NEW"
 sudo ln -sf "/usr/share/zoneinfo/$TIMEZONE" /etc/localtime
@@ -227,12 +233,12 @@ sudo sed -i "s/{USER}/$(whoami)/" /etc/ly/config.ini
 # Font cache verversen
 fc-cache -fv
 
-# ── 11. Git instellen ────────────────────────────────────────────────────
+# ── 12. Git instellen ────────────────────────────────────────────────────
 step "Git configureren..."
 git config --global user.name "$GIT_NAME"
 git config --global user.email "$GIT_EMAIL"
 
-# ── 12. Services aanzetten ───────────────────────────────────────────────
+# ── 13. Services aanzetten ───────────────────────────────────────────────
 step "Services aanzetten..."
 sudo systemctl enable --now \
     NetworkManager \
@@ -247,7 +253,7 @@ sudo systemctl enable --now \
     systemd-timesyncd \
     sshd
 
-systemctl --user enable --now wireplumber
+systemctl --user enable --now wireplumber || true
 
 echo ""
 echo -e "${COLOR}======================================${RESET}"
