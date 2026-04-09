@@ -40,7 +40,6 @@ sudo pacman -S --needed --noconfirm \
     firefox \
     git \
     grub grub-btrfs \
-    gsimplecal \
     hypridle hyprland hyprlock hyprpaper \
     hyprpolkitagent \
     hyprshot \
@@ -143,6 +142,12 @@ fi
 # ── 7. Symlinks aanmaken ──────────────────────────────────────────────────
 step "Symlinks aanmaken..."
 ln -sf "$HOME/.config/zsh/.zshrc" "$HOME/.zshrc"
+
+# Nemo acties en scripts
+mkdir -p "$HOME/.local/share/nemo/actions" "$HOME/.local/share/nemo/scripts"
+cp "$HOME/.config/nemo/actions/"* "$HOME/.local/share/nemo/actions/"
+cp "$HOME/.config/nemo/scripts/"* "$HOME/.local/share/nemo/scripts/"
+chmod +x "$HOME/.local/share/nemo/scripts/"*
 
 # ── 8. Secrets aanmaken ───────────────────────────────────────────────────
 SECRETS="$HOME/.config/waybar/scripts/secrets.env"

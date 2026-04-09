@@ -1,0 +1,7 @@
+[Nemo Action]
+Name=Uitpakken naar map "%f"
+Comment=Pakt het archief uit naar een map met dezelfde naam
+Exec=bash /home/don/.local/share/nemo/scripts/extract-to-folder.sh %F
+Icon-Name=archive-extract
+Selection=any
+Extensions=zip;tar;tar.gz;tar.bz2;tar.xz;tar.zst;tgz;7z;rar;

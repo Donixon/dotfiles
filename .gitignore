@@ -1,6 +1,9 @@
 # Gevoelige bestanden
 waybar/scripts/secrets.env
 
+# Verwijderde apps
+gsimplecal/
+
 # App data (niet in repo)
 BambuStudio/
 LobeHub/
