@@ -156,36 +156,7 @@ cp "$HOME/.config/nemo/actions/"* "$HOME/.local/share/nemo/actions/" 2>/dev/null
 cp "$HOME/.config/nemo/scripts/"* "$HOME/.local/share/nemo/scripts/" 2>/dev/null || true
 chmod +x "$HOME/.local/share/nemo/scripts/"* 2>/dev/null || true
 
-# ── 8. GTK dark mode ────────────────────────────────────────────────────
-step "Dark mode instellen..."
-gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' || true
-gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark' || true
-
-dconf write /org/nemo/preferences/default-folder-viewer "'list-view'" || true
-dconf write /org/nemo/preferences/show-hidden-files false || true
-dconf write /org/nemo/preferences/show-full-path-in-title-bar true || true
-dconf write /org/nemo/preferences/show-open-in-terminal-toolbar true || true
-dconf write /org/nemo/preferences/thumbnail-limit "uint64 10485760" || true
-dconf write /org/nemo/preferences/default-sort-order "'mtime'" || true
-dconf write /org/nemo/preferences/default-sort-in-reverse-order true || true
-dconf write /org/nemo/preferences/show-location-entry true || true
-dconf write /org/nemo/preferences/date-format "'informal'" || true
-dconf write /org/nemo/preferences/show-reload-icon-toolbar true || true
-dconf write /org/nemo/preferences/show-new-folder-icon-toolbar true || true
-dconf write /org/nemo/preferences/inherit-folder-viewer true || true
-dconf write /org/nemo/preferences/swap-trash-delete true || true
-
-# Firefox als standaard browser
-if ! xdg-mime query default x-scheme-handler/http 2>/dev/null | grep -q firefox; then
-    xdg-mime default firefox.desktop x-scheme-handler/http || true
-    xdg-mime default firefox.desktop x-scheme-handler/https || true
-    xdg-mime default firefox.desktop text/html || true
-    xdg-mime default firefox.desktop application/xhtml+xml || true
-else
-    skip "Firefox als standaard browser"
-fi
-
-# ── 9. Locale instellen ──────────────────────────────────────────────────
+# ── 8. Locale instellen ──────────────────────────────────────────────────
 step "Locale instellen..."
 if ! grep -q "^en_US.UTF-8" /etc/locale.gen 2>/dev/null; then
     sudo sed -i 's/^#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
@@ -223,7 +194,7 @@ fi
 # Font cache verversen
 fc-cache -fv
 
-# ── 10. Services aanzetten ───────────────────────────────────────────────
+# ── 9. Services aanzetten ────────────────────────────────────────────────
 step "Services aanzetten..."
 for svc in NetworkManager bluetooth docker earlyoom ly tailscaled avahi-daemon systemd-resolved systemd-timesyncd sshd; do
     if ! systemctl is-enabled "$svc" &>/dev/null; then
