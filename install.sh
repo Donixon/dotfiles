@@ -115,12 +115,17 @@ sudo pacman -S --needed --noconfirm \
 
 # ── 4. AUR packages ───────────────────────────────────────────────────────
 step "AUR packages installeren..."
-yay -S --needed --noconfirm \
-    grimblast-git \
-    pacseek \
-    ttf-symbola \
-    vscodium-bin \
+aur_packages=(
+    grimblast-git
+    pacseek
+    ttf-symbola
+    vscodium-bin
     wlogout
+)
+for pkg in "${aur_packages[@]}"; do
+    echo -e "  → $pkg installeren..."
+    yay -S --needed --noconfirm "$pkg" || echo -e "  ⚠ $pkg gefaald, verder..."
+done
 
 # ── 5. Zsh als standaard shell ────────────────────────────────────────────
 step "Zsh instellen als standaard shell..."
