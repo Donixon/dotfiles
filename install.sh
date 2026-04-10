@@ -15,12 +15,6 @@ skip()  { echo -e "  ${GREEN}✓${RESET} $1 — al gedaan, overgeslagen."; }
 # ── Vragen vooraf ─────────────────────────────────────────────────────────
 echo -e "${COLOR}Dotfiles installatie — een paar vragen eerst${RESET}\n"
 
-read -p "Git naam       [jouwgebruikersnaam]: " GIT_NAME
-GIT_NAME="${GIT_NAME:-jouwgebruikersnaam}"
-
-read -p "Git email      [jouw@email.com]: " GIT_EMAIL
-GIT_EMAIL="${GIT_EMAIL:-jouw@email.com}"
-
 read -p "Hostname       [archmachine]: " HOSTNAME_NEW
 HOSTNAME_NEW="${HOSTNAME_NEW:-archmachine}"
 
@@ -151,7 +145,7 @@ fi
 # ── 6. SSH key aanmaken ───────────────────────────────────────────────────
 step "SSH key aanmaken..."
 if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
-    ssh-keygen -t ed25519 -C "$GIT_EMAIL" -f "$HOME/.ssh/id_ed25519" -N ""
+    ssh-keygen -t ed25519 -C "$(hostname)" -f "$HOME/.ssh/id_ed25519" -N ""
     echo ""
     echo "Voeg deze SSH key toe aan GitHub (github.com/settings/ssh/new):"
     cat "$HOME/.ssh/id_ed25519.pub"
@@ -291,18 +285,7 @@ fi
 # Font cache verversen
 fc-cache -fv
 
-# ── 12. Git instellen ────────────────────────────────────────────────────
-step "Git configureren..."
-CURRENT_GIT_NAME=$(git config --global user.name 2>/dev/null || true)
-CURRENT_GIT_EMAIL=$(git config --global user.email 2>/dev/null || true)
-if [ "$CURRENT_GIT_NAME" != "$GIT_NAME" ] || [ "$CURRENT_GIT_EMAIL" != "$GIT_EMAIL" ]; then
-    git config --global user.name "$GIT_NAME"
-    git config --global user.email "$GIT_EMAIL"
-else
-    skip "git config"
-fi
-
-# ── 13. Services aanzetten ───────────────────────────────────────────────
+# ── 12. Services aanzetten ───────────────────────────────────────────────
 step "Services aanzetten..."
 for svc in NetworkManager bluetooth docker earlyoom iwd ly tailscaled avahi-daemon systemd-resolved systemd-timesyncd sshd; do
     if ! systemctl is-enabled "$svc" &>/dev/null; then
