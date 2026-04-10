@@ -4,7 +4,6 @@
 # Vereist: verse Arch installatie met internet, als gewone gebruiker (niet root)
 
 set -e
-exec < /dev/tty  # stdin terugzetten naar terminal zodat read werkt via curl|bash
 COLOR="\033[1;34m"
 GREEN="\033[1;32m"
 RESET="\033[0m"
