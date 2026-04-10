@@ -69,18 +69,14 @@ sudo pacman -S --needed --noconfirm \
     efibootmgr \
     fastfetch \
     firefox \
-    firefoxpwa \
     git \
     grub \
     hypridle hyprland hyprlock hyprpaper \
     hyprpolkitagent \
-    hyprshot \
-    impala \
     inotify-tools \
     iw iwd \
     jq \
     kitty \
-    lazydocker \
     linux linux-firmware linux-headers \
     ly \
     man-db \
@@ -126,7 +122,11 @@ sudo pacman -S --needed --noconfirm \
 # ── 4. AUR packages ───────────────────────────────────────────────────────
 step "AUR packages installeren..."
 yay -S --needed --noconfirm \
+    firefoxpwa \
     grimblast-git \
+    hyprshot \
+    impala \
+    lazydocker \
     notepad \
     pacseek \
     ttf-symbola \
@@ -194,9 +194,9 @@ ln -sf "$HOME/.config/zsh/.zshrc" "$HOME/.zshrc"
 
 # Nemo acties en scripts
 mkdir -p "$HOME/.local/share/nemo/actions" "$HOME/.local/share/nemo/scripts"
-cp "$HOME/.config/nemo/actions/"* "$HOME/.local/share/nemo/actions/"
-cp "$HOME/.config/nemo/scripts/"* "$HOME/.local/share/nemo/scripts/"
-chmod +x "$HOME/.local/share/nemo/scripts/"*
+cp "$HOME/.config/nemo/actions/"* "$HOME/.local/share/nemo/actions/" 2>/dev/null || true
+cp "$HOME/.config/nemo/scripts/"* "$HOME/.local/share/nemo/scripts/" 2>/dev/null || true
+chmod +x "$HOME/.local/share/nemo/scripts/"* 2>/dev/null || true
 
 # ── 9. Secrets aanmaken ───────────────────────────────────────────────────
 SECRETS="$HOME/.config/waybar/scripts/secrets.env"
@@ -229,10 +229,10 @@ dconf write /org/nemo/preferences/swap-trash-delete true || true
 
 # Firefox als standaard browser
 if ! xdg-mime query default x-scheme-handler/http 2>/dev/null | grep -q firefox; then
-    xdg-mime default firefox.desktop x-scheme-handler/http
-    xdg-mime default firefox.desktop x-scheme-handler/https
-    xdg-mime default firefox.desktop text/html
-    xdg-mime default firefox.desktop application/xhtml+xml
+    xdg-mime default firefox.desktop x-scheme-handler/http || true
+    xdg-mime default firefox.desktop x-scheme-handler/https || true
+    xdg-mime default firefox.desktop text/html || true
+    xdg-mime default firefox.desktop application/xhtml+xml || true
 else
     skip "Firefox als standaard browser"
 fi
@@ -287,7 +287,7 @@ fc-cache -fv
 
 # ── 12. Services aanzetten ───────────────────────────────────────────────
 step "Services aanzetten..."
-for svc in NetworkManager bluetooth docker earlyoom iwd ly tailscaled avahi-daemon systemd-resolved systemd-timesyncd sshd; do
+for svc in NetworkManager bluetooth docker earlyoom ly tailscaled avahi-daemon systemd-resolved systemd-timesyncd sshd; do
     if ! systemctl is-enabled "$svc" &>/dev/null; then
         sudo systemctl enable --now "$svc"
     else
