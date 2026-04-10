@@ -129,39 +129,11 @@ else
     skip "standaard shell (al zsh)"
 fi
 
-# ── 6. SSH key aanmaken ───────────────────────────────────────────────────
-step "SSH key aanmaken..."
-if [ ! -f "$HOME/.ssh/id_ed25519" ]; then
-    ssh-keygen -t ed25519 -C "$(hostname)" -f "$HOME/.ssh/id_ed25519" -N ""
-    echo ""
-    echo "Voeg deze SSH key toe aan GitHub (github.com/settings/ssh/new):"
-    cat "$HOME/.ssh/id_ed25519.pub"
-    echo ""
-    read -p "Druk Enter als je de key hebt toegevoegd..."
-else
-    skip "SSH key"
-fi
-
-# SSH config voor GitHub (port 443 fallback)
-mkdir -p "$HOME/.ssh"
-if ! grep -q "ssh.github.com" "$HOME/.ssh/config" 2>/dev/null; then
-    cat >> "$HOME/.ssh/config" << 'EOF'
-
-Host github.com
-    Hostname ssh.github.com
-    Port 443
-    User git
-EOF
-else
-    skip "SSH config (github port 443)"
-fi
-chmod 600 "$HOME/.ssh/config"
-
-# ── 7. Dotfiles clonen ────────────────────────────────────────────────────
+# ── 6. Dotfiles clonen ────────────────────────────────────────────────────
 step "Dotfiles ophalen..."
 if [ ! -d "$HOME/.config/.git" ]; then
     mv "$HOME/.config" "$HOME/.config.bak" 2>/dev/null || true
-    git clone git@github.com:Donixon/dotfiles.git "$HOME/.config"
+    git clone https://github.com/Donixon/dotfiles.git "$HOME/.config"
     cp -rn "$HOME/.config.bak/." "$HOME/.config/" 2>/dev/null || true
 else
     skip "dotfiles clone (al aanwezig, pullen...)"
@@ -175,7 +147,7 @@ else
     skip "pywal kleuren"
 fi
 
-# ── 8. Symlinks aanmaken ──────────────────────────────────────────────────
+# ── 7. Symlinks aanmaken ──────────────────────────────────────────────────
 step "Symlinks aanmaken..."
 ln -sf "$HOME/.config/zsh/.zshrc" "$HOME/.zshrc"
 
@@ -185,17 +157,7 @@ cp "$HOME/.config/nemo/actions/"* "$HOME/.local/share/nemo/actions/" 2>/dev/null
 cp "$HOME/.config/nemo/scripts/"* "$HOME/.local/share/nemo/scripts/" 2>/dev/null || true
 chmod +x "$HOME/.local/share/nemo/scripts/"* 2>/dev/null || true
 
-# ── 9. Secrets aanmaken ───────────────────────────────────────────────────
-SECRETS="$HOME/.config/waybar/scripts/secrets.env"
-if [ ! -f "$SECRETS" ]; then
-    step "OpenWeatherMap API key instellen..."
-    read -p "Voer je OpenWeatherMap API key in: " OWM_KEY
-    echo "API_KEY=\"$OWM_KEY\"" > "$SECRETS"
-else
-    skip "secrets.env"
-fi
-
-# ── 10. GTK dark mode ────────────────────────────────────────────────────
+# ── 8. GTK dark mode ────────────────────────────────────────────────────
 step "Dark mode instellen..."
 gsettings set org.gnome.desktop.interface color-scheme 'prefer-dark' || true
 gsettings set org.gnome.desktop.interface gtk-theme 'Adwaita-dark' || true
@@ -224,9 +186,8 @@ else
     skip "Firefox als standaard browser"
 fi
 
-# ── 11. Locale instellen ─────────────────────────────────────────────────
+# ── 9. Locale instellen ──────────────────────────────────────────────────
 step "Locale instellen..."
-# Locale
 if ! grep -q "^en_US.UTF-8" /etc/locale.gen 2>/dev/null; then
     sudo sed -i 's/^#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
     sudo sed -i 's/^#nl_NL.UTF-8/nl_NL.UTF-8/' /etc/locale.gen
@@ -263,7 +224,7 @@ fi
 # Font cache verversen
 fc-cache -fv
 
-# ── 12. Services aanzetten ───────────────────────────────────────────────
+# ── 10. Services aanzetten ───────────────────────────────────────────────
 step "Services aanzetten..."
 for svc in NetworkManager bluetooth docker earlyoom ly tailscaled avahi-daemon systemd-resolved systemd-timesyncd sshd; do
     if ! systemctl is-enabled "$svc" &>/dev/null; then
