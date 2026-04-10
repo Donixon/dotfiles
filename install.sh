@@ -126,7 +126,6 @@ yay -S --needed --noconfirm \
     hyprshot \
     impala \
     lazydocker \
-    notepad \
     pacseek \
     ttf-symbola \
     vscodium-bin \
