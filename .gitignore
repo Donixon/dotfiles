@@ -30,8 +30,10 @@ systemd/
 viewnior/
 vlc/
 
-# Cache en gegenereerde bestanden
-wal/
+# Cache en gegenereerde bestanden (wal/templates/ wordt wél getrackt)
+wal/cache/
+wal/colors*
+wal/sequences
 gtk-3.0/bookmarks
 gtk-4.0/
 pulse/
