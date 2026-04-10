@@ -42,9 +42,6 @@ Het script draait volledig automatisch en slaat stappen over die al gedaan zijn:
 - Symlinks aanmaken (`.zshrc`)
 - Nemo acties installeren
 - Pywal kleuren genereren
-- GTK dark mode instellen
-- Nemo instellingen toepassen
-- Firefox als standaard browser instellen
 - Locale instellen (en_US + nl_NL)
 - Zram instellen (voorkomt vastlopen bij vol geheugen)
 - Ly display manager configureren (autologin)
@@ -56,6 +53,7 @@ Het script draait volledig automatisch en slaat stappen over die al gedaan zijn:
 - Herstart je systeem
 - Log in via `ly`
 - Hyprland start op met al je configuratie
+- Bij eerste login stelt `first-login.sh` automatisch eenmalig in: GTK dark mode, Nemo instellingen, Firefox als standaard browser
 
 ### 4. Monitornamen aanpassen
 
