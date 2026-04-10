@@ -21,11 +21,10 @@ Persoonlijke Arch Linux configuratie voor een Hyprland desktop.
 
 ### 1. Arch installeren
 
-Installeer Arch Linux via de officiële installatiegids. Zorg dat je:
-- Een gebruiker `don` hebt aangemaakt
+Installeer Arch Linux via `archinstall`. Zorg dat je:
+- Een gebruiker aangemaakt hebt met sudo rechten
 - Internetverbinding hebt
 - Als gewone gebruiker bent ingelogd (niet root)
-- `sudo` geconfigureerd hebt
 
 ### 2. Script uitvoeren
 
@@ -33,31 +32,24 @@ Installeer Arch Linux via de officiële installatiegids. Zorg dat je:
 bash <(curl -s https://raw.githubusercontent.com/Donixon/dotfiles/main/install.sh)
 ```
 
-Het script vraagt eerst naar:
-- Git naam en email
-- Hostname voor de nieuwe machine
-- Tijdzone
+Het script draait volledig automatisch en slaat stappen over die al gedaan zijn:
 
-Daarna doet het automatisch (en slaat stappen over die al gedaan zijn):
 - Pacman optimaliseren (parallel downloads, kleur)
 - `yay` installeren (AUR helper)
 - Alle packages installeren (inclusief fonts, bluetooth, docker)
 - Zsh instellen als standaard shell
-- SSH key aanmaken en GitHub koppelen
-- Dotfiles clonen naar `~/.config`
+- Dotfiles clonen naar `~/.config` via HTTPS
 - Symlinks aanmaken (`.zshrc`)
 - Nemo acties installeren
 - Pywal kleuren genereren
 - GTK dark mode instellen
 - Nemo instellingen toepassen
 - Firefox als standaard browser instellen
-- Hostname, tijdzone en locale instellen
+- Locale instellen (en_US + nl_NL)
 - Zram instellen (voorkomt vastlopen bij vol geheugen)
 - Ly display manager configureren (autologin)
 - Alle services aanzetten
 - Font cache verversen
-
-Het script pauzeert om je SSH key toe te voegen aan GitHub.
 
 ### 3. Na afloop
 
@@ -139,8 +131,6 @@ Alle scripts staan in `waybar/scripts/`:
 | `power-menu.sh` | Rofi power menu (vergrendelen/uitloggen/suspend/reboot/uitzetten) |
 | `openweathermap.sh` | Haalt weerdata op via OpenWeatherMap API |
 | `cava.sh` | Stuurt cava audio visualizer output naar waybar |
-
-De OpenWeatherMap API key staat in `waybar/scripts/secrets.env` (niet in git).
 
 ## Wijzigingen pushen
 
