@@ -12,6 +12,9 @@ step()  { echo -e "\n${COLOR}==>${RESET} $1"; }
 skip()  { echo -e "  ${GREEN}✓${RESET} $1 — al gedaan, overgeslagen."; }
 
 # ── 1. Pacman optimaliseren ───────────────────────────────────────────────
+step "Pacman database updaten..."
+sudo pacman -Sy --noconfirm
+
 step "Pacman instellen..."
 if grep -q "^#ParallelDownloads" /etc/pacman.conf; then
     sudo sed -i 's/^#ParallelDownloads.*/ParallelDownloads = 5/' /etc/pacman.conf
@@ -29,7 +32,7 @@ fi
 # ── 2. Yay (AUR helper) ───────────────────────────────────────────────────
 step "Yay installeren..."
 if ! command -v yay &>/dev/null; then
-    sudo pacman -S --needed --noconfirm git base-devel
+    sudo pacman -Sy --needed --noconfirm git base-devel
     git clone https://aur.archlinux.org/yay-bin.git /tmp/yay-bin
     (cd /tmp/yay-bin && makepkg -si --noconfirm)
     rm -rf /tmp/yay-bin
