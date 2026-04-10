@@ -59,15 +59,19 @@ sudo pacman -S --needed --noconfirm \
     earlyoom \
     efibootmgr \
     fastfetch \
+    firefoxpwa \
     firefox \
     git \
     grub \
     hypridle hyprland hyprlock hyprpaper \
     hyprpolkitagent \
+    hyprshot \
+    impala \
     inotify-tools \
     iw iwd \
     jq \
     kitty \
+    lazydocker \
     linux linux-firmware linux-headers \
     ly \
     man-db \
@@ -112,11 +116,7 @@ sudo pacman -S --needed --noconfirm \
 # ── 4. AUR packages ───────────────────────────────────────────────────────
 step "AUR packages installeren..."
 yay -S --needed --noconfirm \
-    firefoxpwa \
     grimblast-git \
-    hyprshot \
-    impala \
-    lazydocker \
     pacseek \
     ttf-symbola \
     vscodium-bin \
