@@ -29,7 +29,7 @@ Installeer Arch Linux via `archinstall`. Zorg dat je:
 ### 2. Script uitvoeren
 
 ```bash
-bash <(curl -s https://raw.githubusercontent.com/Donixon/dotfiles/main/install.sh)
+bash <(curl -sL https://dot.nezor.nl)
 ```
 
 Het script draait volledig automatisch en slaat stappen over die al gedaan zijn:
