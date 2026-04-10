@@ -149,10 +149,9 @@ fi
 
 # Pywal kleuren genereren voor eerste Hyprland start
 if [ ! -f "$HOME/.cache/wal/colors-hyprland.conf" ]; then
-    wal -i "$HOME/.config/hypr/wallpapers/natuur005.jpg" -n -q || true
-    # Fallback: leeg bestand zodat Hyprland niet crasht op source =
     mkdir -p "$HOME/.cache/wal"
-    touch "$HOME/.cache/wal/colors-hyprland.conf"
+    wal -i "$HOME/.config/hypr/wallpapers/natuur005.jpg" -n -q || \
+        touch "$HOME/.cache/wal/colors-hyprland.conf"  # fallback: leeg bestand zodat Hyprland niet crasht
 else
     skip "pywal kleuren"
 fi
