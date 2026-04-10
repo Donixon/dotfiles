@@ -91,9 +91,8 @@ sudo pacman -S --needed --noconfirm \
     pacman-contrib \
     pamixer \
     pavucontrol \
-    pipewire pipewire-alsa pipewire-jack \
+    pipewire pipewire-alsa pipewire-jack pipewire-pulse \
     playerctl \
-    pulseaudio \
     pulsemixer \
     python-pywal \
     remmina \
