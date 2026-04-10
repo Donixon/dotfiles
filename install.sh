@@ -12,17 +12,6 @@ RESET="\033[0m"
 step()  { echo -e "\n${COLOR}==>${RESET} $1"; }
 skip()  { echo -e "  ${GREEN}✓${RESET} $1 — al gedaan, overgeslagen."; }
 
-# ── Vragen vooraf ─────────────────────────────────────────────────────────
-echo -e "${COLOR}Dotfiles installatie — een paar vragen eerst${RESET}\n"
-
-read -p "Hostname       [archmachine]: " HOSTNAME_NEW
-HOSTNAME_NEW="${HOSTNAME_NEW:-archmachine}"
-
-read -p "Tijdzone       [Europe/Amsterdam]: " TIMEZONE
-TIMEZONE="${TIMEZONE:-Europe/Amsterdam}"
-
-echo ""
-
 # ── 1. Pacman optimaliseren ───────────────────────────────────────────────
 step "Pacman instellen..."
 if grep -q "^#ParallelDownloads" /etc/pacman.conf; then
@@ -235,17 +224,8 @@ else
     skip "Firefox als standaard browser"
 fi
 
-# ── 11. Systeem instellen ────────────────────────────────────────────────
-step "Hostname, tijdzone en locale instellen..."
-if [ "$(hostname)" != "$HOSTNAME_NEW" ]; then
-    sudo hostnamectl set-hostname "$HOSTNAME_NEW"
-else
-    skip "hostname"
-fi
-
-sudo ln -sf "/usr/share/zoneinfo/$TIMEZONE" /etc/localtime
-sudo hwclock --systohc
-
+# ── 11. Locale instellen ─────────────────────────────────────────────────
+step "Locale instellen..."
 # Locale
 if ! grep -q "^en_US.UTF-8" /etc/locale.gen 2>/dev/null; then
     sudo sed -i 's/^#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
