@@ -215,7 +215,7 @@ fi
 
 # ── 10. Services aanzetten ───────────────────────────────────────────────
 step "Services aanzetten..."
-for svc in NetworkManager bluetooth docker earlyoom tailscaled avahi-daemon systemd-resolved systemd-timesyncd sshd; do
+for svc in NetworkManager iwd bluetooth docker earlyoom tailscaled avahi-daemon systemd-resolved systemd-timesyncd sshd; do
     if ! systemctl is-enabled "$svc" &>/dev/null; then
         sudo systemctl enable --now "$svc"
     else
