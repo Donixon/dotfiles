@@ -207,13 +207,20 @@ fc-cache -fv
 
 # ── 9. Services aanzetten ────────────────────────────────────────────────
 step "Services aanzetten..."
-for svc in NetworkManager bluetooth docker earlyoom ly tailscaled avahi-daemon systemd-resolved systemd-timesyncd sshd; do
+for svc in NetworkManager bluetooth docker earlyoom tailscaled avahi-daemon systemd-resolved systemd-timesyncd sshd; do
     if ! systemctl is-enabled "$svc" &>/dev/null; then
         sudo systemctl enable --now "$svc"
     else
         skip "service $svc"
     fi
 done
+
+# Ly display manager (template unit, vereist instantie)
+if ! systemctl is-enabled "ly@tty2.service" &>/dev/null; then
+    sudo systemctl enable --now ly@tty2.service
+else
+    skip "service ly"
+fi
 
 systemctl --user enable --now wireplumber || true
 
