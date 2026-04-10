@@ -206,12 +206,17 @@ fc-cache -fv
 
 # ── 9. NetworkManager instellen met iwd als wifi-backend (voor impala) ───
 step "NetworkManager iwd-backend instellen..."
-if [ ! -f /etc/NetworkManager/conf.d/iwd.conf ]; then
-    sudo mkdir -p /etc/NetworkManager/conf.d
-    echo -e "[device]\nwifi.backend=iwd" | sudo tee /etc/NetworkManager/conf.d/iwd.conf > /dev/null
-else
-    skip "iwd.conf"
-fi
+sudo mkdir -p /etc/NetworkManager/conf.d
+sudo tee /etc/NetworkManager/conf.d/iwd.conf > /dev/null << 'EOF'
+[device]
+wifi.backend=iwd
+
+[main]
+plugins=keyfile
+
+[keyfile]
+unmanaged-devices=type:wifi
+EOF
 
 # ── 10. Services aanzetten ───────────────────────────────────────────────
 step "Services aanzetten..."
