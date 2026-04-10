@@ -12,8 +12,8 @@ step()  { echo -e "\n${COLOR}==>${RESET} $1"; }
 skip()  { echo -e "  ${GREEN}✓${RESET} $1 — al gedaan, overgeslagen."; }
 
 # ── 1. Pacman optimaliseren ───────────────────────────────────────────────
-step "Pacman database updaten..."
-sudo pacman -Sy --noconfirm
+step "Pacman database updaten en systeem upgraden..."
+sudo pacman -Syu --noconfirm
 
 step "Pacman instellen..."
 if grep -q "^#ParallelDownloads" /etc/pacman.conf; then
