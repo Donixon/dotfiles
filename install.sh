@@ -204,7 +204,16 @@ fi
 # Font cache verversen
 fc-cache -fv
 
-# ── 9. Services aanzetten ────────────────────────────────────────────────
+# ── 9. NetworkManager instellen met iwd als wifi-backend (voor impala) ───
+step "NetworkManager iwd-backend instellen..."
+if [ ! -f /etc/NetworkManager/conf.d/iwd.conf ]; then
+    sudo mkdir -p /etc/NetworkManager/conf.d
+    echo -e "[device]\nwifi.backend=iwd" | sudo tee /etc/NetworkManager/conf.d/iwd.conf > /dev/null
+else
+    skip "iwd.conf"
+fi
+
+# ── 10. Services aanzetten ───────────────────────────────────────────────
 step "Services aanzetten..."
 for svc in NetworkManager bluetooth docker earlyoom tailscaled avahi-daemon systemd-resolved systemd-timesyncd sshd; do
     if ! systemctl is-enabled "$svc" &>/dev/null; then
