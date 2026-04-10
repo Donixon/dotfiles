@@ -1,5 +1,5 @@
 #!/bin/bash
-# install.sh — Arch Linux setup script voor donixon
+# install.sh — Arch Linux setup script
 # Gebruik: bash install.sh
 # Vereist: verse Arch installatie met internet, als gewone gebruiker (niet root)
 
@@ -14,14 +14,14 @@ skip()  { echo -e "  ${GREEN}✓${RESET} $1 — al gedaan, overgeslagen."; }
 # ── Vragen vooraf ─────────────────────────────────────────────────────────
 echo -e "${COLOR}Dotfiles installatie — een paar vragen eerst${RESET}\n"
 
-read -p "Git naam       [donixon]: " GIT_NAME
-GIT_NAME="${GIT_NAME:-donixon}"
+read -p "Git naam       [jouwgebruikersnaam]: " GIT_NAME
+GIT_NAME="${GIT_NAME:-jouwgebruikersnaam}"
 
-read -p "Git email      [roseshop@tuta.io]: " GIT_EMAIL
-GIT_EMAIL="${GIT_EMAIL:-roseshop@tuta.io}"
+read -p "Git email      [jouw@email.com]: " GIT_EMAIL
+GIT_EMAIL="${GIT_EMAIL:-jouw@email.com}"
 
-read -p "Hostname       [archnixon]: " HOSTNAME_NEW
-HOSTNAME_NEW="${HOSTNAME_NEW:-archnixon}"
+read -p "Hostname       [archmachine]: " HOSTNAME_NEW
+HOSTNAME_NEW="${HOSTNAME_NEW:-archmachine}"
 
 read -p "Tijdzone       [Europe/Amsterdam]: " TIMEZONE
 TIMEZONE="${TIMEZONE:-Europe/Amsterdam}"
