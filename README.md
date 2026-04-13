@@ -77,6 +77,17 @@ De standaard prompt toont:
 
 Voorbeeld: `don@archnixon ~/project (main) ✓`
 
+### 6. Wifi (impala/iwd)
+
+Wifi-profielen worden opgeslagen door `iwd` en autoconnect staat per netwerk aan. Check na je eerste connectie:
+
+```bash
+iwctl known-networks list
+iwctl known-networks "JOUW_SSID" show
+# indien nodig:
+iwctl known-networks "JOUW_SSID" set-property AutoConnect yes
+```
+
 ## Shortcuts
 
 `$mainMod` = Super (Windows-toets)

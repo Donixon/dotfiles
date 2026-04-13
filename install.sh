@@ -232,6 +232,16 @@ step "Netwerkservices instellen..."
 # iwd bewaart bekende netwerken in /var/lib/iwd
 sudo install -d -m 700 /var/lib/iwd
 
+# iwd basisconfig voor persistente netwerken + DHCP/DNS via systemd
+sudo mkdir -p /etc/iwd
+sudo tee /etc/iwd/main.conf > /dev/null << 'EOF'
+[General]
+EnableNetworkConfiguration=true
+
+[Network]
+NameResolvingService=systemd
+EOF
+
 # NetworkManager iwd-backend (zodat nmcli/nmtui en iwd elkaar niet bijten)
 sudo mkdir -p /etc/NetworkManager/conf.d
 sudo tee /etc/NetworkManager/conf.d/iwd.conf > /dev/null << 'EOF'
