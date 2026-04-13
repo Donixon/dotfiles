@@ -37,7 +37,10 @@ else
 fi
 
 # Switch wallpaper met awww (instant met smooth fade)
+# Alleen actieve monitors (voorkomt eDP-1 re-enable als klep dicht is)
+ACTIVE_OUTPUTS=$(hyprctl monitors -j | jq -r '.[] | select(.disabled == false) | .name' | tr '\n' ',' | sed 's/,$//')
 awww img "$NEXT" \
+    --outputs "$ACTIVE_OUTPUTS" \
     --transition-type fade \
     --transition-duration 1 \
     --transition-fps 60 &
