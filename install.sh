@@ -6,10 +6,12 @@
 set -euo pipefail
 COLOR="\033[1;34m"
 GREEN="\033[1;32m"
+YELLOW="\033[1;33m"
 RESET="\033[0m"
 
 step()  { echo -e "\n${COLOR}==>${RESET} $1"; }
 skip()  { echo -e "  ${GREEN}✓${RESET} $1 — al gedaan, overgeslagen."; }
+warn()  { echo -e "  ${YELLOW}⚠${RESET} $1"; }
 
 # ── 1. Pacman optimaliseren ───────────────────────────────────────────────
 step "Pacman database updaten en systeem upgraden..."
@@ -33,9 +35,12 @@ fi
 step "Yay installeren..."
 if ! command -v yay &>/dev/null; then
     sudo pacman -Sy --needed --noconfirm git base-devel
-    git clone https://aur.archlinux.org/yay-bin.git /tmp/yay-bin
-    (cd /tmp/yay-bin && makepkg -si --noconfirm)
-    rm -rf /tmp/yay-bin
+    yay_tmp="$(mktemp -d /tmp/yay-bin.XXXXXX)"
+    trap 'rm -rf "$yay_tmp"' EXIT
+    git clone https://aur.archlinux.org/yay-bin.git "$yay_tmp"
+    (cd "$yay_tmp" && makepkg -si --noconfirm)
+    rm -rf "$yay_tmp"
+    trap - EXIT
 else
     skip "yay"
 fi
@@ -131,7 +136,11 @@ done
 step "Zsh instellen als standaard shell..."
 CURRENT_SHELL=$(getent passwd "$USER" | cut -d: -f7)
 if [ "$CURRENT_SHELL" != "/usr/bin/zsh" ]; then
-    chsh -s /usr/bin/zsh
+    if [ -t 0 ]; then
+        chsh -s /usr/bin/zsh "$USER"
+    else
+        warn "Geen interactieve TTY; chsh overgeslagen. Zet later handmatig: chsh -s /usr/bin/zsh $USER"
+    fi
 else
     skip "standaard shell (al zsh)"
 fi
@@ -249,11 +258,17 @@ else
     skip "service ly"
 fi
 
-# systemd-resolved stub resolver gebruiken
-if [ "$(readlink -f /etc/resolv.conf 2>/dev/null || true)" != "/run/systemd/resolve/stub-resolv.conf" ]; then
-    sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
-else
+# systemd-resolved stub resolver gebruiken (zonder bestaande custom resolv.conf te overschrijven)
+resolved_stub="/run/systemd/resolve/stub-resolv.conf"
+current_resolv="$(readlink -f /etc/resolv.conf 2>/dev/null || true)"
+if [ "$current_resolv" = "$resolved_stub" ]; then
     skip "resolv.conf symlink"
+elif [ ! -e "$resolved_stub" ]; then
+    warn "systemd-resolved stub ontbreekt; /etc/resolv.conf niet aangepast."
+elif [ -L /etc/resolv.conf ] || [ ! -s /etc/resolv.conf ]; then
+    sudo ln -sf "$resolved_stub" /etc/resolv.conf
+else
+    warn "Bestaande /etc/resolv.conf behouden (niet overschreven)."
 fi
 
 systemctl --user enable --now wireplumber || true
