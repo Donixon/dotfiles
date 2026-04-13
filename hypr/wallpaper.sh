@@ -60,11 +60,6 @@ if [ -f ~/.cache/wal/colors-hyprland.conf ]; then
     [ -n "$INACTIVE" ] && hyprctl keyword general:col.inactive_border "$INACTIVE"
 fi
 
-# Update Waybar kleuren via CSS reload signal (GEEN proces restart)
-if pgrep -x waybar > /dev/null; then
-    pkill -SIGUSR2 waybar 2>/dev/null
-fi
-
 # Optionele notificatie
 BASENAME=$(basename "$NEXT" | sed 's/\.[^.]*$//')
 notify-send -t 1500 "Wallpaper" "$BASENAME" 2>/dev/null
