@@ -1,5 +1,5 @@
 #!/bin/bash
-# awww wallpaper switcher - snel, simpel, betrouwbaar
+# awww wallpaper switcher met pywal voor dynamische kleuren
 # SUPER+SHIFT+N: volgende wallpaper
 
 WALLPAPER_DIR="$HOME/.config/hypr/wallpapers"
@@ -37,7 +37,10 @@ else
     NEXT="${WALLPAPERS[$NEXT_INDEX]}"
 fi
 
-# Switch wallpaper met awww (smooth fade transition)
+# Genereer pywal kleuren (silent, in background zodat wallpaper meteen wisselt)
+wal -i "$NEXT" -n -q &
+
+# Switch wallpaper met awww (smooth fade transition) - gebeurt meteen, wacht niet op pywal
 awww img "$NEXT" \
     --transition-type fade \
     --transition-duration 1 \
@@ -45,6 +48,22 @@ awww img "$NEXT" \
 
 # Onthoud keuze
 echo "$NEXT" > "$STATE_FILE"
+
+# Wacht tot pywal klaar is
+wait
+
+# Update Hyprland border kleuren (live via keyword, geen reload)
+if [ -f ~/.cache/wal/colors-hyprland.conf ]; then
+    ACTIVE=$(grep 'col.active_border' ~/.cache/wal/colors-hyprland.conf | sed 's/.*= //')
+    INACTIVE=$(grep 'col.inactive_border' ~/.cache/wal/colors-hyprland.conf | sed 's/.*= //')
+    [ -n "$ACTIVE" ] && hyprctl keyword general:col.active_border "$ACTIVE"
+    [ -n "$INACTIVE" ] && hyprctl keyword general:col.inactive_border "$INACTIVE"
+fi
+
+# Update Waybar kleuren via CSS reload signal (GEEN proces restart)
+if pgrep -x waybar > /dev/null; then
+    pkill -SIGUSR2 waybar 2>/dev/null
+fi
 
 # Optionele notificatie
 BASENAME=$(basename "$NEXT" | sed 's/\.[^.]*$//')
