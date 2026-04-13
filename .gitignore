@@ -61,3 +61,10 @@ _bak_*
 *.log
 *.tmp
 *.cache
+
+# Runtime/state bestanden
+.first-login-done
+mimeapps.list
+uv/
+hypr/.current_wallpaper
+hypr/hyprpaper.conf
