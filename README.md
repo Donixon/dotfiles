@@ -45,7 +45,7 @@ Het script draait volledig automatisch en slaat stappen over die al gedaan zijn:
 - Locale instellen (en_US + nl_NL)
 - Zram instellen (voorkomt vastlopen bij vol geheugen)
 - Ly display manager configureren (autologin)
-- Alle services aanzetten
+- Alle services aanzetten én starten (incl. NetworkManager + iwd voor wifi autoconnect)
 - Font cache verversen
 
 ### 3. Na afloop

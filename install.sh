@@ -226,8 +226,13 @@ fi
 # Font cache verversen
 fc-cache -fv
 
-# ── 9. NetworkManager instellen met iwd als wifi-backend (voor impala) ───
-step "NetworkManager iwd-backend instellen..."
+# ── 9. Netwerk instellen (iwd + NetworkManager voor tooling compatibiliteit) ──
+step "Netwerkservices instellen..."
+
+# iwd bewaart bekende netwerken in /var/lib/iwd
+sudo install -d -m 700 /var/lib/iwd
+
+# NetworkManager iwd-backend (zodat nmcli/nmtui en iwd elkaar niet bijten)
 sudo mkdir -p /etc/NetworkManager/conf.d
 sudo tee /etc/NetworkManager/conf.d/iwd.conf > /dev/null << 'EOF'
 [device]
@@ -237,7 +242,7 @@ EOF
 # ── 10. Services aanzetten ───────────────────────────────────────────────
 step "Services aanzetten..."
 # wpa_supplicant conflicteert met iwd
-if systemctl is-enabled wpa_supplicant &>/dev/null; then
+if systemctl is-enabled wpa_supplicant &>/dev/null || systemctl is-active wpa_supplicant &>/dev/null; then
     sudo systemctl disable --now wpa_supplicant
 else
     skip "wpa_supplicant uitschakelen (al uit)"
@@ -245,9 +250,26 @@ fi
 
 for svc in NetworkManager iwd bluetooth docker earlyoom tailscaled avahi-daemon systemd-resolved systemd-timesyncd sshd; do
     if ! systemctl is-enabled "$svc" &>/dev/null; then
-        sudo systemctl enable --now "$svc"
+        sudo systemctl enable "$svc"
     else
-        skip "service $svc"
+        skip "service $svc (enabled)"
+    fi
+
+    if ! systemctl is-active "$svc" &>/dev/null; then
+        sudo systemctl start "$svc"
+    else
+        skip "service $svc (active)"
+    fi
+done
+
+# Extra zekerheid voor eerste reboot: NM/iwd moeten écht actief zijn
+for svc in NetworkManager iwd; do
+    if ! systemctl is-active "$svc" &>/dev/null; then
+        warn "service $svc was niet actief, probeer restart..."
+        sudo systemctl restart "$svc" || true
+    fi
+    if ! systemctl is-active "$svc" &>/dev/null; then
+        warn "service $svc is nog steeds niet actief"
     fi
 done
 
