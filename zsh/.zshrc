@@ -69,7 +69,7 @@ add-zsh-hook precmd  _timer_stop
 add-zsh-hook precmd  vcs_info
 
 setopt PROMPT_SUBST
-PROMPT=$'\n''%F{cyan}%~%f${vcs_info_msg_0_} %(?.%F{green}✓%f.%F{red}✗%f)${_cmd_time:+ %F{yellow}${_cmd_time}%f}
+PROMPT=$'\n''%F{blue}%n@%m%f %F{cyan}%~%f${vcs_info_msg_0_} %(?.%F{green}✓%f.%F{red}✗%f)${_cmd_time:+ %F{yellow}${_cmd_time}%f}
 %F{magenta}❯%f '
 
 # ── Gekleurde man pages ───────────────────────────────────────────────────

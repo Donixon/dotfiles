@@ -14,7 +14,7 @@ Persoonlijke Arch Linux configuratie voor een Hyprland desktop.
 | Idle manager | Hypridle |
 | Wallpaper | Hyprpaper + pywal |
 | Bestandsbeheer | Nemo |
-| Shell | Pure Zsh |
+| Shell | Pure Zsh (custom prompt met `user@hostname`) |
 | Display manager | Ly |
 
 ## Installatie op een nieuwe laptop
@@ -66,6 +66,16 @@ hyprctl monitors
 Pas daarna aan in:
 - `hypr/hyprland.conf` — `monitor=` regels bovenaan
 - `hypr/hyprpaper.conf` — `monitor =` in het wallpaper blok
+
+### 5. Zsh prompt
+
+De standaard prompt toont:
+- `user@hostname`
+- huidige map
+- git branch (als je in een repo zit)
+- status (`✓`/`✗`) en commandotijd bij langere commando's
+
+Voorbeeld: `don@archnixon ~/project (main) ✓`
 
 ## Shortcuts
 
