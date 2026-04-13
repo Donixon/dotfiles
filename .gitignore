@@ -68,3 +68,13 @@ mimeapps.list
 uv/
 hypr/.current_wallpaper
 hypr/hyprpaper.conf
+
+# Editor backups
+*~
+*.swp
+*.swo
+.*.sw?
+
+# OS artifacts
+.DS_Store
+Thumbs.db

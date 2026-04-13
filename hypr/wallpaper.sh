@@ -18,7 +18,6 @@ CURRENT=$(cat "$STATE_FILE" 2>/dev/null)
 mapfile -t WALLPAPERS < <(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) | sort)
 
 if [ ${#WALLPAPERS[@]} -eq 0 ]; then
-    notify-send "Geen wallpapers gevonden in $WALLPAPER_DIR"
     exit 1
 fi
 
@@ -37,27 +36,29 @@ else
     NEXT="${WALLPAPERS[$NEXT_INDEX]}"
 fi
 
-# Genereer pywal kleuren (silent, in background zodat wallpaper meteen wisselt)
-wal -i "$NEXT" -n -q &
-
-# Switch wallpaper met awww (smooth fade transition) - gebeurt meteen, wacht niet op pywal
+# Switch wallpaper met awww (instant met smooth fade)
 awww img "$NEXT" \
     --transition-type fade \
     --transition-duration 1 \
-    --transition-fps 60
+    --transition-fps 60 &
 
-# Onthoud keuze
+# Genereer pywal kleuren in background (non-blocking)
+(
+    wal -i "$NEXT" -n -q
+    
+    # Update Hyprland border kleuren
+    if [ -f ~/.cache/wal/colors-hyprland.conf ]; then
+        ACTIVE=$(grep 'col.active_border' ~/.cache/wal/colors-hyprland.conf | sed 's/.*= //')
+        INACTIVE=$(grep 'col.inactive_border' ~/.cache/wal/colors-hyprland.conf | sed 's/.*= //')
+        [ -n "$ACTIVE" ] && hyprctl keyword general:col.active_border "$ACTIVE"
+        [ -n "$INACTIVE" ] && hyprctl keyword general:col.inactive_border "$INACTIVE"
+    fi
+    
+    # Reload waybar voor nieuwe kleuren (na pywal)
+    ~/.config/waybar/scripts/reload.sh
+) &
+
+# Onthoud keuze (instant feedback)
 echo "$NEXT" > "$STATE_FILE"
-
-# Wacht tot pywal klaar is
-wait
-
-# Update Hyprland border kleuren (live via keyword, geen reload)
-if [ -f ~/.cache/wal/colors-hyprland.conf ]; then
-    ACTIVE=$(grep 'col.active_border' ~/.cache/wal/colors-hyprland.conf | sed 's/.*= //')
-    INACTIVE=$(grep 'col.inactive_border' ~/.cache/wal/colors-hyprland.conf | sed 's/.*= //')
-    [ -n "$ACTIVE" ] && hyprctl keyword general:col.active_border "$ACTIVE"
-    [ -n "$INACTIVE" ] && hyprctl keyword general:col.inactive_border "$INACTIVE"
-fi
 
 exit 0
