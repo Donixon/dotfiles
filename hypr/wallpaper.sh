@@ -54,8 +54,7 @@ awww img "$NEXT" \
         [ -n "$INACTIVE" ] && hyprctl keyword general:col.inactive_border "$INACTIVE"
     fi
     
-    # Reload waybar voor nieuwe kleuren (na pywal)
-    ~/.config/waybar/scripts/reload.sh
+    # Waybar reload verwijderd - veroorzaakt monitor/lid-dpms issues
 ) &
 
 # Onthoud keuze (instant feedback)
