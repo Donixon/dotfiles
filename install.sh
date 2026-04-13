@@ -249,6 +249,15 @@ sudo tee /etc/NetworkManager/conf.d/iwd.conf > /dev/null << 'EOF'
 wifi.backend=iwd
 EOF
 
+# NetworkManager hoofdconfig: keyfile plugin voor persistente WiFi connecties
+sudo tee /etc/NetworkManager/NetworkManager.conf > /dev/null << 'EOF'
+[main]
+plugins=keyfile
+
+[keyfile]
+unmanaged-devices=none
+EOF
+
 # ── 10. Services aanzetten ───────────────────────────────────────────────
 step "Services aanzetten..."
 # wpa_supplicant conflicteert met iwd
