@@ -63,4 +63,8 @@ awww img "$NEXT" \
 # Onthoud keuze (instant feedback)
 echo "$NEXT" > "$STATE_FILE"
 
+# Herstel monitor state (zet eDP-1 uit als klep dicht is)
+sleep 0.5
+~/.config/hypr/lid-dpms.sh
+
 exit 0
