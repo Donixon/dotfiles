@@ -1,59 +1,53 @@
 #!/bin/bash
-# wallpaper.sh — switch wallpaper and regenerate pywal colors
-# Usage: wallpaper.sh [path]   → set specific wallpaper
-#        wallpaper.sh          → pick a random one from wallpapers dir
+# awww wallpaper switcher - snel, simpel, betrouwbaar
+# SUPER+SHIFT+N: volgende wallpaper
 
 WALLPAPER_DIR="$HOME/.config/hypr/wallpapers"
+STATE_FILE="$HOME/.config/hypr/.current_wallpaper"
 
-if [ -n "$1" ]; then
-    WALLPAPER="$1"
-else
-    CURRENT=$(grep "path = " ~/.config/hypr/hyprpaper.conf 2>/dev/null | head -1 | awk '{print $3}')
-    mapfile -t ALL < <(find "$WALLPAPER_DIR" -type f \( -name "*.jpg" -o -name "*.png" \) | sort)
-    COUNT=${#ALL[@]}
-    NEXT=0
-    for i in "${!ALL[@]}"; do
-        if [ "${ALL[$i]}" = "$CURRENT" ]; then
-            NEXT=$(( (i + 1) % COUNT ))
-            break
-        fi
-    done
-    WALLPAPER="${ALL[$NEXT]}"
+# Start awww daemon als die niet draait
+if ! pgrep -x awww-daemon > /dev/null; then
+    awww-daemon &
+    sleep 0.5
 fi
 
-if [ ! -f "$WALLPAPER" ]; then
-    echo "Wallpaper not found: $WALLPAPER"
+# Haal huidige wallpaper op
+CURRENT=$(cat "$STATE_FILE" 2>/dev/null)
+
+# Vind alle wallpapers (gesorteerd)
+mapfile -t WALLPAPERS < <(find "$WALLPAPER_DIR" -type f \( -iname "*.jpg" -o -iname "*.png" -o -iname "*.jpeg" \) | sort)
+
+if [ ${#WALLPAPERS[@]} -eq 0 ]; then
+    notify-send "Geen wallpapers gevonden in $WALLPAPER_DIR"
     exit 1
 fi
 
-echo "Setting wallpaper: $WALLPAPER"
+# Als argument gegeven, gebruik die
+if [ -n "$1" ] && [ -f "$1" ]; then
+    NEXT="$1"
+else
+    # Vind index van huidige wallpaper en ga naar volgende
+    NEXT_INDEX=0
+    for i in "${!WALLPAPERS[@]}"; do
+        if [ "${WALLPAPERS[$i]}" = "$CURRENT" ]; then
+            NEXT_INDEX=$(( (i + 1) % ${#WALLPAPERS[@]} ))
+            break
+        fi
+    done
+    NEXT="${WALLPAPERS[$NEXT_INDEX]}"
+fi
 
-# Generate pywal colors
-wal -i "$WALLPAPER" -n -q
+# Switch wallpaper met awww (smooth fade transition)
+awww img "$NEXT" \
+    --transition-type fade \
+    --transition-duration 1 \
+    --transition-fps 60
 
-# Stel wallpaper in via hyprpaper
-cat > ~/.config/hypr/hyprpaper.conf << EOF
-splash = false
+# Onthoud keuze
+echo "$NEXT" > "$STATE_FILE"
 
-wallpaper {
-    monitor = DP-4
-    path = $WALLPAPER
-    fit_mode = cover
-}
-EOF
-pkill hyprpaper; sleep 0.3 && hyprpaper &
+# Optionele notificatie
+BASENAME=$(basename "$NEXT" | sed 's/\.[^.]*$//')
+notify-send -t 1500 "Wallpaper" "$BASENAME" 2>/dev/null
 
-# Pas Hyprland border kleuren aan via keyword (geen full reload — dat zet eDP-1 aan)
-ACTIVE=$(grep 'active_border' ~/.cache/wal/colors-hyprland.conf | sed 's/.*= //')
-INACTIVE=$(grep 'inactive_border' ~/.cache/wal/colors-hyprland.conf | sed 's/.*= //')
-[ -n "$ACTIVE" ]   && hyprctl keyword general:col.active_border "$ACTIVE"
-[ -n "$INACTIVE" ] && hyprctl keyword general:col.inactive_border "$INACTIVE"
-
-# Reload Waybar (CSS kleuren)
-pkill waybar; sleep 0.3 && waybar &
-
-# Herstel monitor staat (lid dicht = eDP-1 uit)
-sleep 0.5
-~/.config/hypr/lid-dpms.sh
-
-echo "Done."
+exit 0
