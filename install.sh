@@ -3,7 +3,7 @@
 # Gebruik: bash install.sh
 # Vereist: verse Arch installatie met internet, als gewone gebruiker (niet root)
 
-set -e
+set -euo pipefail
 COLOR="\033[1;34m"
 GREEN="\033[1;32m"
 RESET="\033[0m"
@@ -59,14 +59,12 @@ sudo pacman -S --needed --noconfirm \
     earlyoom \
     efibootmgr \
     fastfetch \
-    firefoxpwa \
     firefox \
     git \
     grub \
     hypridle hyprland hyprlock hyprpaper \
     hyprpolkitagent \
     hyprshot \
-    impala \
     inotify-tools \
     iw iwd \
     jq \
@@ -116,7 +114,9 @@ sudo pacman -S --needed --noconfirm \
 # ── 4. AUR packages ───────────────────────────────────────────────────────
 step "AUR packages installeren..."
 aur_packages=(
+    firefoxpwa
     grimblast-git
+    impala
     pacseek
     ttf-symbola
     vscodium-bin
@@ -139,9 +139,15 @@ fi
 # ── 6. Dotfiles clonen ────────────────────────────────────────────────────
 step "Dotfiles ophalen..."
 if [ ! -d "$HOME/.config/.git" ]; then
-    mv "$HOME/.config" "$HOME/.config.bak" 2>/dev/null || true
+    backup_dir="$HOME/.config.bak"
+    if [ -e "$backup_dir" ]; then
+        backup_dir="$HOME/.config.bak.$(date +%Y%m%d-%H%M%S)"
+    fi
+    mv "$HOME/.config" "$backup_dir" 2>/dev/null || true
     git clone https://github.com/Donixon/dotfiles.git "$HOME/.config"
-    cp -rn "$HOME/.config.bak/." "$HOME/.config/" 2>/dev/null || true
+    if [ -d "$backup_dir" ]; then
+        cp -rn "$backup_dir/." "$HOME/.config/" 2>/dev/null || true
+    fi
 else
     skip "dotfiles clone (al aanwezig, pullen...)"
     git -C "$HOME/.config" pull
@@ -168,9 +174,16 @@ chmod +x "$HOME/.local/share/nemo/scripts/"* 2>/dev/null || true
 
 # ── 8. Locale instellen ──────────────────────────────────────────────────
 step "Locale instellen..."
+locale_changed=0
 if ! grep -q "^en_US.UTF-8" /etc/locale.gen 2>/dev/null; then
     sudo sed -i 's/^#en_US.UTF-8/en_US.UTF-8/' /etc/locale.gen
+    locale_changed=1
+fi
+if ! grep -q "^nl_NL.UTF-8" /etc/locale.gen 2>/dev/null; then
     sudo sed -i 's/^#nl_NL.UTF-8/nl_NL.UTF-8/' /etc/locale.gen
+    locale_changed=1
+fi
+if [ "$locale_changed" -eq 1 ]; then
     sudo locale-gen
 else
     skip "locale.gen"
@@ -210,12 +223,6 @@ sudo mkdir -p /etc/NetworkManager/conf.d
 sudo tee /etc/NetworkManager/conf.d/iwd.conf > /dev/null << 'EOF'
 [device]
 wifi.backend=iwd
-
-[main]
-plugins=keyfile
-
-[keyfile]
-unmanaged-devices=type:wifi
 EOF
 
 # ── 10. Services aanzetten ───────────────────────────────────────────────
@@ -240,6 +247,13 @@ if ! systemctl is-enabled "ly@tty2.service" &>/dev/null; then
     sudo systemctl enable --now ly@tty2.service
 else
     skip "service ly"
+fi
+
+# systemd-resolved stub resolver gebruiken
+if [ "$(readlink -f /etc/resolv.conf 2>/dev/null || true)" != "/run/systemd/resolve/stub-resolv.conf" ]; then
+    sudo ln -sf /run/systemd/resolve/stub-resolv.conf /etc/resolv.conf
+else
+    skip "resolv.conf symlink"
 fi
 
 systemctl --user enable --now wireplumber || true
